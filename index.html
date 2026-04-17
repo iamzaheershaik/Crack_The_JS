@@ -98,9 +98,33 @@ body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-he
 @keyframes tin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .empty{padding:2.5rem;text-align:center;color:var(--muted);font-size:.88rem}
 @media(max-width:768px){.sidebar{display:none}.hstats{display:none}}
+/* PAGE NAV */
+.page-nav{display:flex;align-items:center;gap:.5rem;background:var(--surface);border-bottom:1px solid var(--border);padding:.5rem 1.5rem;position:sticky;top:0;z-index:200;overflow-x:auto;scrollbar-width:none}
+.page-nav::-webkit-scrollbar{display:none}
+.page-nav-link{display:inline-flex;align-items:center;gap:.45rem;padding:.38rem .85rem;border-radius:7px;font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;text-decoration:none;border:1px solid transparent;transition:all .18s;white-space:nowrap;color:var(--muted)}
+.page-nav-link:hover{background:var(--surface2);color:var(--text)}
+.page-nav-link.active{background:var(--surface2);border-color:var(--accent);color:var(--accent)}
+.page-nav-link.pn-prearray{--pn-clr:#00bcd4}
+.page-nav-link.pn-prearray:hover,.page-nav-link.pn-prearray.active{color:var(--pn-clr);border-color:var(--pn-clr);background:rgba(0,188,212,.08)}
+.page-nav-link.pn-react{--pn-clr:#61dafb}
+.page-nav-link.pn-react:hover,.page-nav-link.pn-react.active{color:var(--pn-clr);border-color:var(--pn-clr);background:rgba(97,218,251,.08)}
+.page-nav-separator{width:1px;height:18px;background:var(--border);margin:0 .25rem}
 </style>
 </head>
 <body>
+<nav class="page-nav">
+  <a href="index.html" class="page-nav-link active" title="JS Interview MCQ Bank">
+    <span>⚡</span> JS MCQ Bank
+  </a>
+  <div class="page-nav-separator"></div>
+  <a href="PreArray.html" class="page-nav-link pn-prearray" title="Pre-Array Logic — JS &amp; C++ Solutions">
+    <span>🔢</span> Pre-Array Logic
+  </a>
+  <div class="page-nav-separator"></div>
+  <a href="react.html" class="page-nav-link pn-react" title="React — 41 Questions Every Beginner Must Know">
+    <span>⚛</span> React Q&amp;A
+  </a>
+</nav>
 <header class="header">
   <div class="logo">
     <div class="logo-icon">JS</div>

@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pre-Array Logic — JS & C++ Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0e14;
+    --surface: #12161f;
+    --card: #181d28;
+    --border: #252c3d;
+    --accent-js: #f7df1e;
+    --accent-cpp: #00bcd4;
+    --accent-glow-js: rgba(247,223,30,0.15);
+    --accent-glow-cpp: rgba(0,188,212,0.15);
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --tag: #1e293b;
+    --green: #4ade80;
+    --orange: #fb923c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HEADER */
+  header {
+    padding: 60px 48px 40px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  header h1 {
+    font-size: clamp(32px, 5vw, 58px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  header p {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 15px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 300;
+  }
+
+  .lang-badges {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    padding: 6px 14px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .badge-js { background: var(--accent-glow-js); color: var(--accent-js); border: 1px solid rgba(247,223,30,0.3); }
+  .badge-cpp { background: var(--accent-glow-cpp); color: var(--accent-cpp); border: 1px solid rgba(0,188,212,0.3); }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(11,14,20,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  nav::-webkit-scrollbar { display: none; }
+
+  .nav-item {
+    padding: 16px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .nav-item:hover, .nav-item.active {
+    color: var(--text);
+    border-bottom-color: var(--accent-js);
+  }
+
+  /* MAIN */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 48px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 80px;
+    scroll-margin-top: 56px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 3px;
+  }
+
+  .section-title {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .section-icon {
+    font-size: 24px;
+  }
+
+  /* PROBLEM CARD */
+  .problem-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .problem-card:hover {
+    border-color: #3a4155;
+  }
+
+  .problem-header {
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    gap: 16px;
+  }
+
+  .problem-title {
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .diff-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .diff-easy { background: rgba(74,222,128,0.12); color: var(--green); }
+  .diff-medium { background: rgba(251,146,60,0.12); color: var(--orange); }
+
+  .toggle-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: transform 0.2s, background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .problem-card.open .toggle-icon {
+    transform: rotate(180deg);
+    background: var(--border);
+  }
+
+  .problem-body {
+    display: none;
+    border-top: 1px solid var(--border);
+  }
+
+  .problem-card.open .problem-body {
+    display: block;
+  }
+
+  /* TABS */
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab {
+    padding: 12px 22px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    cursor: pointer;
+    color: var(--muted);
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tab.tab-js.active { color: var(--accent-js); border-bottom-color: var(--accent-js); background: var(--accent-glow-js); }
+  .tab.tab-cpp.active { color: var(--accent-cpp); border-bottom-color: var(--accent-cpp); background: var(--accent-glow-cpp); }
+  .tab:not(.active):hover { color: var(--text); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* CODE BLOCK */
+  .code-wrap {
+    position: relative;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    padding: 5px 12px;
+    border-radius: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    transition: all 0.15s;
+    z-index: 5;
+  }
+
+  .copy-btn:hover { color: var(--text); border-color: #3a4155; }
+  .copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+  pre {
+    margin: 0;
+    padding: 24px 24px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.75;
+    background: var(--surface);
+  }
+
+  /* SYNTAX COLORS */
+  .kw { color: #c792ea; }
+  .fn { color: #82aaff; }
+  .str { color: #c3e88d; }
+  .num { color: #f78c6c; }
+  .cm { color: #546e7a; font-style: italic; }
+  .op { color: #89ddff; }
+  .tp { color: var(--accent-cpp); }
+  .js-kw { color: var(--accent-js); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 32px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 768px) {
+    header, main { padding-left: 20px; padding-right: 20px; }
+    nav { padding: 0 20px; }
+    header { padding-top: 36px; }
+  }
+  /* PAGE NAV */
+  .page-nav{display:flex;align-items:center;gap:.5rem;background:rgba(11,14,20,0.97);border-bottom:1px solid var(--border);padding:.48rem 1.5rem;position:sticky;top:0;z-index:200;overflow-x:auto;scrollbar-width:none;backdrop-filter:blur(10px)}
+  .page-nav::-webkit-scrollbar{display:none}
+  .page-nav-link{display:inline-flex;align-items:center;gap:.45rem;padding:.36rem .82rem;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:600;text-decoration:none;border:1px solid transparent;transition:all .18s;white-space:nowrap;color:var(--muted)}
+  .page-nav-link:hover{background:var(--card);color:var(--text)}
+  .page-nav-link.pn-mcq{--pnc:#f7df1e}.page-nav-link.pn-mcq:hover,.page-nav-link.pn-mcq.active{color:var(--pnc);border-color:var(--pnc);background:rgba(247,223,30,.08)}
+  .page-nav-link.pn-prearray.active,.page-nav-link.pn-prearray:hover{color:var(--accent-cpp);border-color:var(--accent-cpp);background:var(--accent-glow-cpp)}
+  .page-nav-link.pn-react{--pnc:#61dafb}.page-nav-link.pn-react:hover,.page-nav-link.pn-react.active{color:var(--pnc);border-color:var(--pnc);background:rgba(97,218,251,.08)}
+  .page-nav-sep{width:1px;height:16px;background:var(--border);margin:0 .2rem}
+</style>
+</head>
+<body>
+
+<nav class="page-nav">
+  <a href="index.html" class="page-nav-link pn-mcq" title="JS Interview MCQ Bank">⚡ JS MCQ Bank</a>
+  <div class="page-nav-sep"></div>
+  <a href="PreArray.html" class="page-nav-link pn-prearray active" title="Pre-Array Logic">🔢 Pre-Array Logic</a>
+  <div class="page-nav-sep"></div>
+  <a href="react.html" class="page-nav-link pn-react" title="React Q&amp;A">⚛ React Q&amp;A</a>
+</nav>
+
+<header>
+  <div class="header-label">// Pre-Array Fundamentals</div>
+  <h1>Logic Before<br>Arrays</h1>
+  <p>→ All foundational problems — JavaScript &amp; C++ solutions</p>
+  <div class="lang-badges">
+    <span class="badge badge-js">JavaScript ES6+</span>
+    <span class="badge badge-cpp">C++17</span>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-item active" onclick="scrollToSection('s1')">🔢 Number Logic</div>
+  <div class="nav-item" onclick="scrollToSection('s2')">🔁 Patterns & Loops</div>
+  <div class="nav-item" onclick="scrollToSection('s3')">🧮 Math Logic</div>
+  <div class="nav-item" onclick="scrollToSection('s4')">🔤 String Logic</div>
+  <div class="nav-item" onclick="scrollToSection('s5')">🧠 Conditional Logic</div>
+  <div class="nav-item" onclick="scrollToSection('s6')">🔄 Recursion</div>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 1: NUMBER LOGIC
+═══════════════════════════════════════════════════ -->
+<section class="section" id="s1">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <span class="section-icon">🔢</span>
+    <h2 class="section-title">Number Logic</h2>
+  </div>
+
+  <!-- 1.1 Even/Odd -->
+  <div class="problem-card" id="card-1">
+    <div class="problem-header" onclick="toggleCard('card-1')">
+      <div class="problem-title">
+        Check Even / Odd
+        <span class="diff-tag diff-easy">EASY</span>
+      </div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-1','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-1','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm">// Check if a number is Even or Odd</span>
+<span class="kw">function</span> <span class="fn">checkEvenOdd</span>(n) {
+  <span class="kw">if</span> (n <span class="op">%</span> <span class="num">2</span> <span class="op">===</span> <span class="num">0</span>) {
+    <span class="kw">return</span> <span class="str">`${n} is Even`</span>;
+  } <span class="kw">else</span> {
+    <span class="kw">return</span> <span class="str">`${n} is Odd`</span>;
+  }
+}
+
+console.<span class="fn">log</span>(<span class="fn">checkEvenOdd</span>(<span class="num">7</span>));   <span class="cm">// 7 is Odd</span>
+console.<span class="fn">log</span>(<span class="fn">checkEvenOdd</span>(<span class="num">12</span>));  <span class="cm">// 12 is Even</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm">// Check if a number is Even or Odd</span>
+<span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">void</span> <span class="fn">checkEvenOdd</span>(<span class="tp">int</span> n) {
+  <span class="kw">if</span> (n <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span>)
+    cout <span class="op">&lt;&lt;</span> n <span class="op">&lt;&lt;</span> <span class="str">" is Even"</span> <span class="op">&lt;&lt;</span> endl;
+  <span class="kw">else</span>
+    cout <span class="op">&lt;&lt;</span> n <span class="op">&lt;&lt;</span> <span class="str">" is Odd"</span> <span class="op">&lt;&lt;</span> endl;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  <span class="fn">checkEvenOdd</span>(<span class="num">7</span>);   <span class="cm">// 7 is Odd</span>
+  <span class="fn">checkEvenOdd</span>(<span class="num">12</span>);  <span class="cm">// 12 is Even</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.2 Sum of Digits -->
+  <div class="problem-card" id="card-2">
+    <div class="problem-header" onclick="toggleCard('card-2')">
+      <div class="problem-title">Sum of Digits <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-2','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-2','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">sumOfDigits</span>(n) {
+  n <span class="op">=</span> Math.<span class="fn">abs</span>(n);  <span class="cm">// handle negatives</span>
+  <span class="kw">let</span> sum <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">while</span> (n <span class="op">&gt;</span> <span class="num">0</span>) {
+    sum <span class="op">+=</span> n <span class="op">%</span> <span class="num">10</span>;
+    n <span class="op">=</span> Math.<span class="fn">floor</span>(n <span class="op">/</span> <span class="num">10</span>);
+  }
+  <span class="kw">return</span> sum;
+}
+
+console.<span class="fn">log</span>(<span class="fn">sumOfDigits</span>(<span class="num">1234</span>));  <span class="cm">// 10</span>
+console.<span class="fn">log</span>(<span class="fn">sumOfDigits</span>(<span class="num">999</span>));   <span class="cm">// 27</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">int</span> <span class="fn">sumOfDigits</span>(<span class="tp">int</span> n) {
+  n <span class="op">=</span> abs(n);
+  <span class="tp">int</span> sum <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">while</span> (n <span class="op">&gt;</span> <span class="num">0</span>) {
+    sum <span class="op">+=</span> n <span class="op">%</span> <span class="num">10</span>;
+    n <span class="op">/=</span> <span class="num">10</span>;
+  }
+  <span class="kw">return</span> sum;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> <span class="fn">sumOfDigits</span>(<span class="num">1234</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// 10</span>
+  cout <span class="op">&lt;&lt;</span> <span class="fn">sumOfDigits</span>(<span class="num">999</span>) <span class="op">&lt;&lt;</span> endl;   <span class="cm">// 27</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.3 Reverse Number -->
+  <div class="problem-card" id="card-3">
+    <div class="problem-header" onclick="toggleCard('card-3')">
+      <div class="problem-title">Reverse a Number <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-3','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-3','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">reverseNumber</span>(n) {
+  <span class="kw">let</span> sign <span class="op">=</span> n <span class="op">&lt;</span> <span class="num">0</span> <span class="op">?</span> <span class="op">-</span><span class="num">1</span> <span class="op">:</span> <span class="num">1</span>;
+  n <span class="op">=</span> Math.<span class="fn">abs</span>(n);
+  <span class="kw">let</span> reversed <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">while</span> (n <span class="op">&gt;</span> <span class="num">0</span>) {
+    reversed <span class="op">=</span> reversed <span class="op">*</span> <span class="num">10</span> <span class="op">+</span> (n <span class="op">%</span> <span class="num">10</span>);
+    n <span class="op">=</span> Math.<span class="fn">floor</span>(n <span class="op">/</span> <span class="num">10</span>);
+  }
+  <span class="kw">return</span> sign <span class="op">*</span> reversed;
+}
+
+console.<span class="fn">log</span>(<span class="fn">reverseNumber</span>(<span class="num">1234</span>));   <span class="cm">// 4321</span>
+console.<span class="fn">log</span>(<span class="fn">reverseNumber</span>(<span class="op">-</span><span class="num">567</span>));  <span class="cm">// -765</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">int</span> <span class="fn">reverseNumber</span>(<span class="tp">int</span> n) {
+  <span class="tp">int</span> sign <span class="op">=</span> (n <span class="op">&lt;</span> <span class="num">0</span>) <span class="op">?</span> <span class="op">-</span><span class="num">1</span> <span class="op">:</span> <span class="num">1</span>;
+  n <span class="op">=</span> abs(n);
+  <span class="tp">int</span> rev <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">while</span> (n <span class="op">&gt;</span> <span class="num">0</span>) {
+    rev <span class="op">=</span> rev <span class="op">*</span> <span class="num">10</span> <span class="op">+</span> n <span class="op">%</span> <span class="num">10</span>;
+    n <span class="op">/=</span> <span class="num">10</span>;
+  }
+  <span class="kw">return</span> sign <span class="op">*</span> rev;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> <span class="fn">reverseNumber</span>(<span class="num">1234</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// 4321</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.4 Palindrome Number -->
+  <div class="problem-card" id="card-4">
+    <div class="problem-header" onclick="toggleCard('card-4')">
+      <div class="problem-title">Palindrome Number <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-4','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-4','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">isPalindromeNumber</span>(n) {
+  <span class="kw">if</span> (n <span class="op">&lt;</span> <span class="num">0</span>) <span class="kw">return false</span>;  <span class="cm">// negatives never palindrome</span>
+  <span class="kw">let</span> original <span class="op">=</span> n, reversed <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">while</span> (n <span class="op">&gt;</span> <span class="num">0</span>) {
+    reversed <span class="op">=</span> reversed <span class="op">*</span> <span class="num">10</span> <span class="op">+</span> (n <span class="op">%</span> <span class="num">10</span>);
+    n <span class="op">=</span> Math.<span class="fn">floor</span>(n <span class="op">/</span> <span class="num">10</span>);
+  }
+  <span class="kw">return</span> original <span class="op">===</span> reversed;
+}
+
+console.<span class="fn">log</span>(<span class="fn">isPalindromeNumber</span>(<span class="num">121</span>));  <span class="cm">// true</span>
+console.<span class="fn">log</span>(<span class="fn">isPalindromeNumber</span>(<span class="num">123</span>));  <span class="cm">// false</span>
+console.<span class="fn">log</span>(<span class="fn">isPalindromeNumber</span>(<span class="num">1221</span>)); <span class="cm">// true</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">bool</span> <span class="fn">isPalindromeNumber</span>(<span class="tp">int</span> n) {
+  <span class="kw">if</span> (n <span class="op">&lt;</span> <span class="num">0</span>) <span class="kw">return false</span>;
+  <span class="tp">int</span> original <span class="op">=</span> n, rev <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">while</span> (n <span class="op">&gt;</span> <span class="num">0</span>) {
+    rev <span class="op">=</span> rev <span class="op">*</span> <span class="num">10</span> <span class="op">+</span> n <span class="op">%</span> <span class="num">10</span>;
+    n <span class="op">/=</span> <span class="num">10</span>;
+  }
+  <span class="kw">return</span> original <span class="op">==</span> rev;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> boolalpha;
+  cout <span class="op">&lt;&lt;</span> <span class="fn">isPalindromeNumber</span>(<span class="num">121</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// true</span>
+  cout <span class="op">&lt;&lt;</span> <span class="fn">isPalindromeNumber</span>(<span class="num">123</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// false</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.5 Factorial -->
+  <div class="problem-card" id="card-5">
+    <div class="problem-header" onclick="toggleCard('card-5')">
+      <div class="problem-title">Factorial (Iterative) <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-5','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-5','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">factorial</span>(n) {
+  <span class="kw">if</span> (n <span class="op">&lt;</span> <span class="num">0</span>) <span class="kw">return</span> <span class="str">"Undefined"</span>;
+  <span class="kw">let</span> result <span class="op">=</span> <span class="num">1</span>;
+  <span class="kw">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="num">2</span>; i <span class="op">&lt;=</span> n; i<span class="op">++</span>) {
+    result <span class="op">*=</span> i;
+  }
+  <span class="kw">return</span> result;
+}
+
+console.<span class="fn">log</span>(<span class="fn">factorial</span>(<span class="num">5</span>));  <span class="cm">// 120</span>
+console.<span class="fn">log</span>(<span class="fn">factorial</span>(<span class="num">0</span>));  <span class="cm">// 1</span>
+console.<span class="fn">log</span>(<span class="fn">factorial</span>(<span class="num">10</span>)); <span class="cm">// 3628800</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">long long</span> <span class="fn">factorial</span>(<span class="tp">int</span> n) {
+  <span class="kw">if</span> (n <span class="op">&lt;</span> <span class="num">0</span>) <span class="kw">return</span> <span class="op">-</span><span class="num">1</span>;
+  <span class="tp">long long</span> result <span class="op">=</span> <span class="num">1</span>;
+  <span class="kw">for</span> (<span class="tp">int</span> i <span class="op">=</span> <span class="num">2</span>; i <span class="op">&lt;=</span> n; i<span class="op">++</span>)
+    result <span class="op">*=</span> i;
+  <span class="kw">return</span> result;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> <span class="fn">factorial</span>(<span class="num">5</span>) <span class="op">&lt;&lt;</span> endl;   <span class="cm">// 120</span>
+  cout <span class="op">&lt;&lt;</span> <span class="fn">factorial</span>(<span class="num">10</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// 3628800</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.6 Armstrong Number -->
+  <div class="problem-card" id="card-6">
+    <div class="problem-header" onclick="toggleCard('card-6')">
+      <div class="problem-title">Armstrong Number <span class="diff-tag diff-medium">MEDIUM</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-6','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-6','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm">// 153 = 1³ + 5³ + 3³ = 1 + 125 + 27 = 153</span>
+<span class="kw">function</span> <span class="fn">isArmstrong</span>(n) {
+  <span class="kw">const</span> digits <span class="op">=</span> String(n).<span class="fn">split</span>(<span class="str">''</span>);
+  <span class="kw">const</span> power <span class="op">=</span> digits.length;
+  <span class="kw">const</span> sum <span class="op">=</span> digits.<span class="fn">reduce</span>((acc, d) <span class="op">=&gt;</span>
+    acc <span class="op">+</span> Math.<span class="fn">pow</span>(Number(d), power), <span class="num">0</span>
+  );
+  <span class="kw">return</span> sum <span class="op">===</span> n;
+}
+
+console.<span class="fn">log</span>(<span class="fn">isArmstrong</span>(<span class="num">153</span>));  <span class="cm">// true</span>
+console.<span class="fn">log</span>(<span class="fn">isArmstrong</span>(<span class="num">370</span>));  <span class="cm">// true</span>
+console.<span class="fn">log</span>(<span class="fn">isArmstrong</span>(<span class="num">123</span>));  <span class="cm">// false</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;cmath&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">bool</span> <span class="fn">isArmstrong</span>(<span class="tp">int</span> n) {
+  <span class="tp">int</span> temp <span class="op">=</span> n, digits <span class="op">=</span> <span class="num">0</span>, sum <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">while</span> (temp <span class="op">&gt;</span> <span class="num">0</span>) { digits<span class="op">++</span>; temp <span class="op">/=</span> <span class="num">10</span>; }
+  temp <span class="op">=</span> n;
+  <span class="kw">while</span> (temp <span class="op">&gt;</span> <span class="num">0</span>) {
+    sum <span class="op">+=</span> pow(temp <span class="op">%</span> <span class="num">10</span>, digits);
+    temp <span class="op">/=</span> <span class="num">10</span>;
+  }
+  <span class="kw">return</span> sum <span class="op">==</span> n;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> boolalpha;
+  cout <span class="op">&lt;&lt;</span> <span class="fn">isArmstrong</span>(<span class="num">153</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// true</span>
+  cout <span class="op">&lt;&lt;</span> <span class="fn">isArmstrong</span>(<span class="num">123</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// false</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.7 Perfect Number -->
+  <div class="problem-card" id="card-7">
+    <div class="problem-header" onclick="toggleCard('card-7')">
+      <div class="problem-title">Perfect Number <span class="diff-tag diff-medium">MEDIUM</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-7','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-7','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm">// Perfect: sum of divisors (excl. itself) == number</span>
+<span class="cm">// e.g. 28 = 1+2+4+7+14 = 28</span>
+<span class="kw">function</span> <span class="fn">isPerfect</span>(n) {
+  <span class="kw">if</span> (n <span class="op">&lt;=</span> <span class="num">1</span>) <span class="kw">return false</span>;
+  <span class="kw">let</span> sum <span class="op">=</span> <span class="num">1</span>;
+  <span class="kw">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="num">2</span>; i <span class="op">&lt;=</span> Math.<span class="fn">sqrt</span>(n); i<span class="op">++</span>) {
+    <span class="kw">if</span> (n <span class="op">%</span> i <span class="op">===</span> <span class="num">0</span>) {
+      sum <span class="op">+=</span> i;
+      <span class="kw">if</span> (i <span class="op">!==</span> n <span class="op">/</span> i) sum <span class="op">+=</span> n <span class="op">/</span> i;
+    }
+  }
+  <span class="kw">return</span> sum <span class="op">===</span> n;
+}
+
+console.<span class="fn">log</span>(<span class="fn">isPerfect</span>(<span class="num">28</span>));  <span class="cm">// true</span>
+console.<span class="fn">log</span>(<span class="fn">isPerfect</span>(<span class="num">6</span>));   <span class="cm">// true</span>
+console.<span class="fn">log</span>(<span class="fn">isPerfect</span>(<span class="num">12</span>));  <span class="cm">// false</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;cmath&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">bool</span> <span class="fn">isPerfect</span>(<span class="tp">int</span> n) {
+  <span class="kw">if</span> (n <span class="op">&lt;=</span> <span class="num">1</span>) <span class="kw">return false</span>;
+  <span class="tp">int</span> sum <span class="op">=</span> <span class="num">1</span>;
+  <span class="kw">for</span> (<span class="tp">int</span> i <span class="op">=</span> <span class="num">2</span>; i <span class="op">&lt;=</span> sqrt(n); i<span class="op">++</span>) {
+    <span class="kw">if</span> (n <span class="op">%</span> i <span class="op">==</span> <span class="num">0</span>) {
+      sum <span class="op">+=</span> i;
+      <span class="kw">if</span> (i <span class="op">!=</span> n <span class="op">/</span> i) sum <span class="op">+=</span> n <span class="op">/</span> i;
+    }
+  }
+  <span class="kw">return</span> sum <span class="op">==</span> n;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> boolalpha;
+  cout <span class="op">&lt;&lt;</span> <span class="fn">isPerfect</span>(<span class="num">28</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// true</span>
+  cout <span class="op">&lt;&lt;</span> <span class="fn">isPerfect</span>(<span class="num">12</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// false</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.8 Count Digits -->
+  <div class="problem-card" id="card-8">
+    <div class="problem-header" onclick="toggleCard('card-8')">
+      <div class="problem-title">Count Digits <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-8','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-8','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">countDigits</span>(n) {
+  n <span class="op">=</span> Math.<span class="fn">abs</span>(n);
+  <span class="kw">if</span> (n <span class="op">===</span> <span class="num">0</span>) <span class="kw">return</span> <span class="num">1</span>;
+  <span class="kw">let</span> count <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">while</span> (n <span class="op">&gt;</span> <span class="num">0</span>) { count<span class="op">++</span>; n <span class="op">=</span> Math.<span class="fn">floor</span>(n <span class="op">/</span> <span class="num">10</span>); }
+  <span class="kw">return</span> count;
+}
+
+console.<span class="fn">log</span>(<span class="fn">countDigits</span>(<span class="num">12345</span>));  <span class="cm">// 5</span>
+console.<span class="fn">log</span>(<span class="fn">countDigits</span>(<span class="num">0</span>));      <span class="cm">// 1</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">int</span> <span class="fn">countDigits</span>(<span class="tp">int</span> n) {
+  n <span class="op">=</span> abs(n);
+  <span class="kw">if</span> (n <span class="op">==</span> <span class="num">0</span>) <span class="kw">return</span> <span class="num">1</span>;
+  <span class="tp">int</span> count <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">while</span> (n <span class="op">&gt;</span> <span class="num">0</span>) { count<span class="op">++</span>; n <span class="op">/=</span> <span class="num">10</span>; }
+  <span class="kw">return</span> count;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> <span class="fn">countDigits</span>(<span class="num">12345</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// 5</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.9 GCD / LCM -->
+  <div class="problem-card" id="card-9">
+    <div class="problem-header" onclick="toggleCard('card-9')">
+      <div class="problem-title">GCD &amp; LCM <span class="diff-tag diff-medium">MEDIUM</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-9','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-9','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm">// Euclidean Algorithm</span>
+<span class="kw">function</span> <span class="fn">gcd</span>(a, b) {
+  <span class="kw">while</span> (b <span class="op">!==</span> <span class="num">0</span>) {
+    <span class="kw">let</span> temp <span class="op">=</span> b;
+    b <span class="op">=</span> a <span class="op">%</span> b;
+    a <span class="op">=</span> temp;
+  }
+  <span class="kw">return</span> a;
+}
+
+<span class="kw">function</span> <span class="fn">lcm</span>(a, b) {
+  <span class="kw">return</span> (a <span class="op">*</span> b) <span class="op">/</span> <span class="fn">gcd</span>(a, b);
+}
+
+console.<span class="fn">log</span>(<span class="fn">gcd</span>(<span class="num">12</span>, <span class="num">18</span>));  <span class="cm">// 6</span>
+console.<span class="fn">log</span>(<span class="fn">lcm</span>(<span class="num">4</span>, <span class="num">6</span>));    <span class="cm">// 12</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">int</span> <span class="fn">gcd</span>(<span class="tp">int</span> a, <span class="tp">int</span> b) {
+  <span class="kw">while</span> (b <span class="op">!=</span> <span class="num">0</span>) {
+    <span class="tp">int</span> temp <span class="op">=</span> b;
+    b <span class="op">=</span> a <span class="op">%</span> b;
+    a <span class="op">=</span> temp;
+  }
+  <span class="kw">return</span> a;
+}
+
+<span class="tp">int</span> <span class="fn">lcm</span>(<span class="tp">int</span> a, <span class="tp">int</span> b) {
+  <span class="kw">return</span> (a <span class="op">*</span> b) <span class="op">/</span> <span class="fn">gcd</span>(a, b);
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> <span class="fn">gcd</span>(<span class="num">12</span>, <span class="num">18</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// 6</span>
+  cout <span class="op">&lt;&lt;</span> <span class="fn">lcm</span>(<span class="num">4</span>, <span class="num">6</span>) <span class="op">&lt;&lt;</span> endl;    <span class="cm">// 12</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.10 Prime Number -->
+  <div class="problem-card" id="card-10">
+    <div class="problem-header" onclick="toggleCard('card-10')">
+      <div class="problem-title">Prime Number Check <span class="diff-tag diff-medium">MEDIUM</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-10','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-10','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">isPrime</span>(n) {
+  <span class="kw">if</span> (n <span class="op">&lt;</span> <span class="num">2</span>) <span class="kw">return false</span>;
+  <span class="kw">if</span> (n <span class="op">===</span> <span class="num">2</span>) <span class="kw">return true</span>;
+  <span class="kw">if</span> (n <span class="op">%</span> <span class="num">2</span> <span class="op">===</span> <span class="num">0</span>) <span class="kw">return false</span>;
+  <span class="kw">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="num">3</span>; i <span class="op">&lt;=</span> Math.<span class="fn">sqrt</span>(n); i <span class="op">+=</span> <span class="num">2</span>) {
+    <span class="kw">if</span> (n <span class="op">%</span> i <span class="op">===</span> <span class="num">0</span>) <span class="kw">return false</span>;
+  }
+  <span class="kw">return true</span>;
+}
+
+console.<span class="fn">log</span>(<span class="fn">isPrime</span>(<span class="num">7</span>));   <span class="cm">// true</span>
+console.<span class="fn">log</span>(<span class="fn">isPrime</span>(<span class="num">15</span>));  <span class="cm">// false</span>
+console.<span class="fn">log</span>(<span class="fn">isPrime</span>(<span class="num">97</span>));  <span class="cm">// true</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;cmath&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">bool</span> <span class="fn">isPrime</span>(<span class="tp">int</span> n) {
+  <span class="kw">if</span> (n <span class="op">&lt;</span> <span class="num">2</span>) <span class="kw">return false</span>;
+  <span class="kw">if</span> (n <span class="op">==</span> <span class="num">2</span>) <span class="kw">return true</span>;
+  <span class="kw">if</span> (n <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span>) <span class="kw">return false</span>;
+  <span class="kw">for</span> (<span class="tp">int</span> i <span class="op">=</span> <span class="num">3</span>; i <span class="op">&lt;=</span> sqrt(n); i <span class="op">+=</span> <span class="num">2</span>)
+    <span class="kw">if</span> (n <span class="op">%</span> i <span class="op">==</span> <span class="num">0</span>) <span class="kw">return false</span>;
+  <span class="kw">return true</span>;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> boolalpha;
+  cout <span class="op">&lt;&lt;</span> <span class="fn">isPrime</span>(<span class="num">7</span>) <span class="op">&lt;&lt;</span> endl;   <span class="cm">// true</span>
+  cout <span class="op">&lt;&lt;</span> <span class="fn">isPrime</span>(<span class="num">97</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// true</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 2: PATTERNS & LOOPS
+═══════════════════════════════════════════════════ -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <span class="section-icon">🔁</span>
+    <h2 class="section-title">Patterns &amp; Loops</h2>
+  </div>
+
+  <!-- Fibonacci -->
+  <div class="problem-card" id="card-11">
+    <div class="problem-header" onclick="toggleCard('card-11')">
+      <div class="problem-title">Fibonacci Series <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-11','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-11','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">fibonacci</span>(n) {
+  <span class="kw">let</span> a <span class="op">=</span> <span class="num">0</span>, b <span class="op">=</span> <span class="num">1</span>;
+  <span class="kw">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="num">0</span>; i <span class="op">&lt;</span> n; i<span class="op">++</span>) {
+    process.stdout.<span class="fn">write</span>(a <span class="op">+</span> <span class="str">" "</span>);  <span class="cm">// or console.log in browser</span>
+    [a, b] <span class="op">=</span> [b, a <span class="op">+</span> b];
+  }
+}
+
+<span class="fn">fibonacci</span>(<span class="num">10</span>);
+<span class="cm">// 0 1 1 2 3 5 8 13 21 34</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">void</span> <span class="fn">fibonacci</span>(<span class="tp">int</span> n) {
+  <span class="tp">int</span> a <span class="op">=</span> <span class="num">0</span>, b <span class="op">=</span> <span class="num">1</span>;
+  <span class="kw">for</span> (<span class="tp">int</span> i <span class="op">=</span> <span class="num">0</span>; i <span class="op">&lt;</span> n; i<span class="op">++</span>) {
+    cout <span class="op">&lt;&lt;</span> a <span class="op">&lt;&lt;</span> <span class="str">" "</span>;
+    <span class="tp">int</span> temp <span class="op">=</span> a <span class="op">+</span> b;
+    a <span class="op">=</span> b; b <span class="op">=</span> temp;
+  }
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  <span class="fn">fibonacci</span>(<span class="num">10</span>);
+  <span class="cm">// 0 1 1 2 3 5 8 13 21 34</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Star Pyramid -->
+  <div class="problem-card" id="card-12">
+    <div class="problem-header" onclick="toggleCard('card-12')">
+      <div class="problem-title">Star Pyramid Pattern <span class="diff-tag diff-medium">MEDIUM</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-12','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-12','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">starPyramid</span>(rows) {
+  <span class="kw">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="num">1</span>; i <span class="op">&lt;=</span> rows; i<span class="op">++</span>) {
+    <span class="kw">let</span> spaces <span class="op">=</span> <span class="str">' '</span>.<span class="fn">repeat</span>(rows <span class="op">-</span> i);
+    <span class="kw">let</span> stars  <span class="op">=</span> <span class="str">'*'</span>.<span class="fn">repeat</span>(<span class="num">2</span> <span class="op">*</span> i <span class="op">-</span> <span class="num">1</span>);
+    console.<span class="fn">log</span>(spaces <span class="op">+</span> stars);
+  }
+}
+
+<span class="fn">starPyramid</span>(<span class="num">5</span>);
+<span class="cm">/*
+    *
+   ***
+  *****
+ *******
+*********
+*/</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">void</span> <span class="fn">starPyramid</span>(<span class="tp">int</span> rows) {
+  <span class="kw">for</span> (<span class="tp">int</span> i <span class="op">=</span> <span class="num">1</span>; i <span class="op">&lt;=</span> rows; i<span class="op">++</span>) {
+    <span class="kw">for</span> (<span class="tp">int</span> s <span class="op">=</span> <span class="num">0</span>; s <span class="op">&lt;</span> rows <span class="op">-</span> i; s<span class="op">++</span>) cout <span class="op">&lt;&lt;</span> <span class="str">" "</span>;
+    <span class="kw">for</span> (<span class="tp">int</span> j <span class="op">=</span> <span class="num">0</span>; j <span class="op">&lt;</span> <span class="num">2</span> <span class="op">*</span> i <span class="op">-</span> <span class="num">1</span>; j<span class="op">++</span>) cout <span class="op">&lt;&lt;</span> <span class="str">"*"</span>;
+    cout <span class="op">&lt;&lt;</span> endl;
+  }
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  <span class="fn">starPyramid</span>(<span class="num">5</span>);
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sieve of Eratosthenes -->
+  <div class="problem-card" id="card-13">
+    <div class="problem-header" onclick="toggleCard('card-13')">
+      <div class="problem-title">Sieve of Eratosthenes — All Primes up to N <span class="diff-tag diff-medium">MEDIUM</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-13','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-13','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">sieve</span>(n) {
+  <span class="kw">const</span> isPrime <span class="op">=</span> <span class="kw">new</span> <span class="fn">Array</span>(n <span class="op">+</span> <span class="num">1</span>).<span class="fn">fill</span>(<span class="kw">true</span>);
+  isPrime[<span class="num">0</span>] <span class="op">=</span> isPrime[<span class="num">1</span>] <span class="op">=</span> <span class="kw">false</span>;
+
+  <span class="kw">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="num">2</span>; i <span class="op">*</span> i <span class="op">&lt;=</span> n; i<span class="op">++</span>) {
+    <span class="kw">if</span> (isPrime[i]) {
+      <span class="kw">for</span> (<span class="kw">let</span> j <span class="op">=</span> i <span class="op">*</span> i; j <span class="op">&lt;=</span> n; j <span class="op">+=</span> i)
+        isPrime[j] <span class="op">=</span> <span class="kw">false</span>;
+    }
+  }
+  <span class="kw">return</span> isPrime.<span class="fn">reduce</span>((acc, val, idx) <span class="op">=&gt;</span>
+    val <span class="op">?</span> [...acc, idx] <span class="op">:</span> acc, []
+  );
+}
+
+console.<span class="fn">log</span>(<span class="fn">sieve</span>(<span class="num">30</span>));
+<span class="cm">// [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;vector&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">void</span> <span class="fn">sieve</span>(<span class="tp">int</span> n) {
+  vector<span class="op">&lt;</span><span class="tp">bool</span><span class="op">&gt;</span> isPrime(n <span class="op">+</span> <span class="num">1</span>, <span class="kw">true</span>);
+  isPrime[<span class="num">0</span>] <span class="op">=</span> isPrime[<span class="num">1</span>] <span class="op">=</span> <span class="kw">false</span>;
+
+  <span class="kw">for</span> (<span class="tp">int</span> i <span class="op">=</span> <span class="num">2</span>; i <span class="op">*</span> i <span class="op">&lt;=</span> n; i<span class="op">++</span>) {
+    <span class="kw">if</span> (isPrime[i])
+      <span class="kw">for</span> (<span class="tp">int</span> j <span class="op">=</span> i <span class="op">*</span> i; j <span class="op">&lt;=</span> n; j <span class="op">+=</span> i)
+        isPrime[j] <span class="op">=</span> <span class="kw">false</span>;
+  }
+  <span class="kw">for</span> (<span class="tp">int</span> i <span class="op">=</span> <span class="num">2</span>; i <span class="op">&lt;=</span> n; i<span class="op">++</span>)
+    <span class="kw">if</span> (isPrime[i]) cout <span class="op">&lt;&lt;</span> i <span class="op">&lt;&lt;</span> <span class="str">" "</span>;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  <span class="fn">sieve</span>(<span class="num">30</span>);
+  <span class="cm">// 2 3 5 7 11 13 17 19 23 29</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 3: MATH LOGIC
+═══════════════════════════════════════════════════ -->
+<section class="section" id="s3">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <span class="section-icon">🧮</span>
+    <h2 class="section-title">Math Logic</h2>
+  </div>
+
+  <!-- Swap -->
+  <div class="problem-card" id="card-14">
+    <div class="problem-header" onclick="toggleCard('card-14')">
+      <div class="problem-title">Swap Two Numbers (with &amp; without temp) <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-14','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-14','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm">// Method 1: With temp</span>
+<span class="kw">function</span> <span class="fn">swapWithTemp</span>(a, b) {
+  <span class="kw">let</span> temp <span class="op">=</span> a;
+  a <span class="op">=</span> b;
+  b <span class="op">=</span> temp;
+  <span class="kw">return</span> [a, b];
+}
+
+<span class="cm">// Method 2: Without temp (XOR)</span>
+<span class="kw">function</span> <span class="fn">swapXOR</span>(a, b) {
+  a <span class="op">=</span> a <span class="op">^</span> b;
+  b <span class="op">=</span> a <span class="op">^</span> b;
+  a <span class="op">=</span> a <span class="op">^</span> b;
+  <span class="kw">return</span> [a, b];
+}
+
+<span class="cm">// Method 3: ES6 destructuring</span>
+<span class="kw">let</span> x <span class="op">=</span> <span class="num">5</span>, y <span class="op">=</span> <span class="num">10</span>;
+[x, y] <span class="op">=</span> [y, x];
+console.<span class="fn">log</span>(x, y);  <span class="cm">// 10 5</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  <span class="tp">int</span> a <span class="op">=</span> <span class="num">5</span>, b <span class="op">=</span> <span class="num">10</span>;
+
+  <span class="cm">// With temp</span>
+  <span class="tp">int</span> temp <span class="op">=</span> a; a <span class="op">=</span> b; b <span class="op">=</span> temp;
+  cout <span class="op">&lt;&lt;</span> a <span class="op">&lt;&lt;</span> <span class="str">" "</span> <span class="op">&lt;&lt;</span> b <span class="op">&lt;&lt;</span> endl;  <span class="cm">// 10 5</span>
+
+  <span class="cm">// XOR swap (no temp)</span>
+  a <span class="op">=</span> <span class="num">5</span>; b <span class="op">=</span> <span class="num">10</span>;
+  a <span class="op">^=</span> b; b <span class="op">^=</span> a; a <span class="op">^=</span> b;
+  cout <span class="op">&lt;&lt;</span> a <span class="op">&lt;&lt;</span> <span class="str">" "</span> <span class="op">&lt;&lt;</span> b <span class="op">&lt;&lt;</span> endl;  <span class="cm">// 10 5</span>
+
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leap Year -->
+  <div class="problem-card" id="card-15">
+    <div class="problem-header" onclick="toggleCard('card-15')">
+      <div class="problem-title">Leap Year Check <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-15','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-15','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">isLeapYear</span>(year) {
+  <span class="kw">return</span> (year <span class="op">%</span> <span class="num">4</span> <span class="op">===</span> <span class="num">0</span> <span class="op">&amp;&amp;</span> year <span class="op">%</span> <span class="num">100</span> <span class="op">!==</span> <span class="num">0</span>)
+      <span class="op">||</span> (year <span class="op">%</span> <span class="num">400</span> <span class="op">===</span> <span class="num">0</span>);
+}
+
+console.<span class="fn">log</span>(<span class="fn">isLeapYear</span>(<span class="num">2024</span>)); <span class="cm">// true</span>
+console.<span class="fn">log</span>(<span class="fn">isLeapYear</span>(<span class="num">1900</span>)); <span class="cm">// false</span>
+console.<span class="fn">log</span>(<span class="fn">isLeapYear</span>(<span class="num">2000</span>)); <span class="cm">// true</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">bool</span> <span class="fn">isLeapYear</span>(<span class="tp">int</span> year) {
+  <span class="kw">return</span> (year <span class="op">%</span> <span class="num">4</span> <span class="op">==</span> <span class="num">0</span> <span class="op">&amp;&amp;</span> year <span class="op">%</span> <span class="num">100</span> <span class="op">!=</span> <span class="num">0</span>)
+      <span class="op">||</span> (year <span class="op">%</span> <span class="num">400</span> <span class="op">==</span> <span class="num">0</span>);
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> boolalpha;
+  cout <span class="op">&lt;&lt;</span> <span class="fn">isLeapYear</span>(<span class="num">2024</span>) <span class="op">&lt;&lt;</span> endl; <span class="cm">// true</span>
+  cout <span class="op">&lt;&lt;</span> <span class="fn">isLeapYear</span>(<span class="num">1900</span>) <span class="op">&lt;&lt;</span> endl; <span class="cm">// false</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 4: STRING LOGIC
+═══════════════════════════════════════════════════ -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <span class="section-icon">🔤</span>
+    <h2 class="section-title">String Logic</h2>
+  </div>
+
+  <!-- Palindrome String -->
+  <div class="problem-card" id="card-16">
+    <div class="problem-header" onclick="toggleCard('card-16')">
+      <div class="problem-title">Palindrome String <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-16','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-16','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">isPalindromeString</span>(str) {
+  str <span class="op">=</span> str.<span class="fn">toLowerCase</span>().<span class="fn">replace</span>(<span class="op">/</span>[^a-z0-9]<span class="op">/g</span>, <span class="str">''</span>);
+  <span class="kw">let</span> left <span class="op">=</span> <span class="num">0</span>, right <span class="op">=</span> str.length <span class="op">-</span> <span class="num">1</span>;
+  <span class="kw">while</span> (left <span class="op">&lt;</span> right) {
+    <span class="kw">if</span> (str[left] <span class="op">!==</span> str[right]) <span class="kw">return false</span>;
+    left<span class="op">++</span>; right<span class="op">--</span>;
+  }
+  <span class="kw">return true</span>;
+}
+
+console.<span class="fn">log</span>(<span class="fn">isPalindromeString</span>(<span class="str">"racecar"</span>));       <span class="cm">// true</span>
+console.<span class="fn">log</span>(<span class="fn">isPalindromeString</span>(<span class="str">"A man a plan a canal Panama"</span>)); <span class="cm">// true</span>
+console.<span class="fn">log</span>(<span class="fn">isPalindromeString</span>(<span class="str">"hello"</span>));         <span class="cm">// false</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;string&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;algorithm&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">bool</span> <span class="fn">isPalindromeString</span>(string s) {
+  <span class="tp">int</span> l <span class="op">=</span> <span class="num">0</span>, r <span class="op">=</span> s.<span class="fn">length</span>() <span class="op">-</span> <span class="num">1</span>;
+  <span class="kw">while</span> (l <span class="op">&lt;</span> r) {
+    <span class="kw">if</span> (s[l] <span class="op">!=</span> s[r]) <span class="kw">return false</span>;
+    l<span class="op">++</span>; r<span class="op">--</span>;
+  }
+  <span class="kw">return true</span>;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> boolalpha;
+  cout <span class="op">&lt;&lt;</span> <span class="fn">isPalindromeString</span>(<span class="str">"racecar"</span>) <span class="op">&lt;&lt;</span> endl; <span class="cm">// true</span>
+  cout <span class="op">&lt;&lt;</span> <span class="fn">isPalindromeString</span>(<span class="str">"hello"</span>) <span class="op">&lt;&lt;</span> endl;   <span class="cm">// false</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Count Vowels -->
+  <div class="problem-card" id="card-17">
+    <div class="problem-header" onclick="toggleCard('card-17')">
+      <div class="problem-title">Count Vowels &amp; Consonants <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-17','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-17','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">countVowelsConsonants</span>(str) {
+  str <span class="op">=</span> str.<span class="fn">toLowerCase</span>();
+  <span class="kw">let</span> vowels <span class="op">=</span> <span class="num">0</span>, consonants <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">const</span> vowelSet <span class="op">=</span> <span class="kw">new</span> <span class="fn">Set</span>([<span class="str">'a'</span>,<span class="str">'e'</span>,<span class="str">'i'</span>,<span class="str">'o'</span>,<span class="str">'u'</span>]);
+
+  <span class="kw">for</span> (<span class="kw">let</span> ch <span class="kw">of</span> str) {
+    <span class="kw">if</span> (ch <span class="op">&gt;=</span> <span class="str">'a'</span> <span class="op">&amp;&amp;</span> ch <span class="op">&lt;=</span> <span class="str">'z'</span>) {
+      vowelSet.<span class="fn">has</span>(ch) <span class="op">?</span> vowels<span class="op">++</span> <span class="op">:</span> consonants<span class="op">++</span>;
+    }
+  }
+  <span class="kw">return</span> { vowels, consonants };
+}
+
+console.<span class="fn">log</span>(<span class="fn">countVowelsConsonants</span>(<span class="str">"Hello World"</span>));
+<span class="cm">// { vowels: 3, consonants: 7 }</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;string&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">void</span> <span class="fn">countVC</span>(string s) {
+  <span class="tp">int</span> v <span class="op">=</span> <span class="num">0</span>, c <span class="op">=</span> <span class="num">0</span>;
+  <span class="kw">for</span> (<span class="tp">char</span> ch : s) {
+    ch <span class="op">=</span> <span class="fn">tolower</span>(ch);
+    <span class="kw">if</span> (ch <span class="op">&gt;=</span> <span class="str">'a'</span> <span class="op">&amp;&amp;</span> ch <span class="op">&lt;=</span> <span class="str">'z'</span>) {
+      string vowels <span class="op">=</span> <span class="str">"aeiou"</span>;
+      vowels.<span class="fn">find</span>(ch) <span class="op">!=</span> string::npos <span class="op">?</span> v<span class="op">++</span> <span class="op">:</span> c<span class="op">++</span>;
+    }
+  }
+  cout <span class="op">&lt;&lt;</span> <span class="str">"Vowels: "</span> <span class="op">&lt;&lt;</span> v <span class="op">&lt;&lt;</span> <span class="str">" Consonants: "</span> <span class="op">&lt;&lt;</span> c <span class="op">&lt;&lt;</span> endl;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  <span class="fn">countVC</span>(<span class="str">"Hello World"</span>); <span class="cm">// Vowels: 3 Consonants: 7</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Anagram -->
+  <div class="problem-card" id="card-18">
+    <div class="problem-header" onclick="toggleCard('card-18')">
+      <div class="problem-title">Anagram Check <span class="diff-tag diff-medium">MEDIUM</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-18','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-18','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">isAnagram</span>(s1, s2) {
+  s1 <span class="op">=</span> s1.<span class="fn">toLowerCase</span>().<span class="fn">replace</span>(<span class="op">/</span>\s<span class="op">/g</span>, <span class="str">''</span>);
+  s2 <span class="op">=</span> s2.<span class="fn">toLowerCase</span>().<span class="fn">replace</span>(<span class="op">/</span>\s<span class="op">/g</span>, <span class="str">''</span>);
+  <span class="kw">if</span> (s1.length <span class="op">!==</span> s2.length) <span class="kw">return false</span>;
+
+  <span class="kw">const</span> freq <span class="op">=</span> {};
+  <span class="kw">for</span> (<span class="kw">let</span> ch <span class="kw">of</span> s1) freq[ch] <span class="op">=</span> (freq[ch] <span class="op">||</span> <span class="num">0</span>) <span class="op">+</span> <span class="num">1</span>;
+  <span class="kw">for</span> (<span class="kw">let</span> ch <span class="kw">of</span> s2) {
+    <span class="kw">if</span> (<span class="op">!</span>freq[ch]) <span class="kw">return false</span>;
+    freq[ch]<span class="op">--</span>;
+  }
+  <span class="kw">return true</span>;
+}
+
+console.<span class="fn">log</span>(<span class="fn">isAnagram</span>(<span class="str">"listen"</span>, <span class="str">"silent"</span>));  <span class="cm">// true</span>
+console.<span class="fn">log</span>(<span class="fn">isAnagram</span>(<span class="str">"hello"</span>, <span class="str">"world"</span>));    <span class="cm">// false</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;string&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">bool</span> <span class="fn">isAnagram</span>(string s1, string s2) {
+  <span class="kw">if</span> (s1.<span class="fn">length</span>() <span class="op">!=</span> s2.<span class="fn">length</span>()) <span class="kw">return false</span>;
+  <span class="tp">int</span> freq[<span class="num">26</span>] <span class="op">=</span> {<span class="num">0</span>};
+  <span class="kw">for</span> (<span class="tp">char</span> c : s1) freq[c <span class="op">-</span> <span class="str">'a'</span>]<span class="op">++</span>;
+  <span class="kw">for</span> (<span class="tp">char</span> c : s2) {
+    <span class="kw">if</span> (<span class="op">--</span>freq[c <span class="op">-</span> <span class="str">'a'</span>] <span class="op">&lt;</span> <span class="num">0</span>) <span class="kw">return false</span>;
+  }
+  <span class="kw">return true</span>;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> boolalpha;
+  cout <span class="op">&lt;&lt;</span> <span class="fn">isAnagram</span>(<span class="str">"listen"</span>, <span class="str">"silent"</span>) <span class="op">&lt;&lt;</span> endl; <span class="cm">// true</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reverse String -->
+  <div class="problem-card" id="card-19">
+    <div class="problem-header" onclick="toggleCard('card-19')">
+      <div class="problem-title">Reverse a String (Manual) <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-19','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-19','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">reverseString</span>(str) {
+  <span class="kw">let</span> result <span class="op">=</span> <span class="str">''</span>;
+  <span class="kw">for</span> (<span class="kw">let</span> i <span class="op">=</span> str.length <span class="op">-</span> <span class="num">1</span>; i <span class="op">&gt;=</span> <span class="num">0</span>; i<span class="op">--</span>) {
+    result <span class="op">+=</span> str[i];
+  }
+  <span class="kw">return</span> result;
+}
+
+console.<span class="fn">log</span>(<span class="fn">reverseString</span>(<span class="str">"hello"</span>));   <span class="cm">// "olleh"</span>
+console.<span class="fn">log</span>(<span class="fn">reverseString</span>(<span class="str">"Zaheer"</span>));  <span class="cm">// "reehaz"</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;string&gt;</span>
+<span class="kw">using namespace</span> std;
+
+string <span class="fn">reverseString</span>(string s) {
+  <span class="tp">int</span> l <span class="op">=</span> <span class="num">0</span>, r <span class="op">=</span> s.<span class="fn">length</span>() <span class="op">-</span> <span class="num">1</span>;
+  <span class="kw">while</span> (l <span class="op">&lt;</span> r) {
+    swap(s[l<span class="op">++</span>], s[r<span class="op">--</span>]);
+  }
+  <span class="kw">return</span> s;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> <span class="fn">reverseString</span>(<span class="str">"hello"</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// "olleh"</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 5: CONDITIONAL LOGIC
+═══════════════════════════════════════════════════ -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <span class="section-icon">🧠</span>
+    <h2 class="section-title">Conditional Logic</h2>
+  </div>
+
+  <!-- FizzBuzz -->
+  <div class="problem-card" id="card-20">
+    <div class="problem-header" onclick="toggleCard('card-20')">
+      <div class="problem-title">FizzBuzz <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-20','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-20','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">fizzBuzz</span>(n) {
+  <span class="kw">for</span> (<span class="kw">let</span> i <span class="op">=</span> <span class="num">1</span>; i <span class="op">&lt;=</span> n; i<span class="op">++</span>) {
+    <span class="kw">if</span> (i <span class="op">%</span> <span class="num">15</span> <span class="op">===</span> <span class="num">0</span>)      console.<span class="fn">log</span>(<span class="str">"FizzBuzz"</span>);
+    <span class="kw">else if</span> (i <span class="op">%</span> <span class="num">3</span> <span class="op">===</span> <span class="num">0</span>) console.<span class="fn">log</span>(<span class="str">"Fizz"</span>);
+    <span class="kw">else if</span> (i <span class="op">%</span> <span class="num">5</span> <span class="op">===</span> <span class="num">0</span>) console.<span class="fn">log</span>(<span class="str">"Buzz"</span>);
+    <span class="kw">else</span>                   console.<span class="fn">log</span>(i);
+  }
+}
+
+<span class="fn">fizzBuzz</span>(<span class="num">15</span>);</pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  <span class="kw">for</span> (<span class="tp">int</span> i <span class="op">=</span> <span class="num">1</span>; i <span class="op">&lt;=</span> <span class="num">15</span>; i<span class="op">++</span>) {
+    <span class="kw">if</span> (i <span class="op">%</span> <span class="num">15</span> <span class="op">==</span> <span class="num">0</span>)      cout <span class="op">&lt;&lt;</span> <span class="str">"FizzBuzz\n"</span>;
+    <span class="kw">else if</span> (i <span class="op">%</span> <span class="num">3</span> <span class="op">==</span> <span class="num">0</span>) cout <span class="op">&lt;&lt;</span> <span class="str">"Fizz\n"</span>;
+    <span class="kw">else if</span> (i <span class="op">%</span> <span class="num">5</span> <span class="op">==</span> <span class="num">0</span>) cout <span class="op">&lt;&lt;</span> <span class="str">"Buzz\n"</span>;
+    <span class="kw">else</span>                   cout <span class="op">&lt;&lt;</span> i <span class="op">&lt;&lt;</span> <span class="str">"\n"</span>;
+  }
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grade Calculator -->
+  <div class="problem-card" id="card-21">
+    <div class="problem-header" onclick="toggleCard('card-21')">
+      <div class="problem-title">Grade Calculator <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-21','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-21','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">getGrade</span>(marks) {
+  <span class="kw">if</span> (marks <span class="op">&gt;=</span> <span class="num">90</span>)      <span class="kw">return</span> <span class="str">'A+'</span>;
+  <span class="kw">else if</span> (marks <span class="op">&gt;=</span> <span class="num">80</span>) <span class="kw">return</span> <span class="str">'A'</span>;
+  <span class="kw">else if</span> (marks <span class="op">&gt;=</span> <span class="num">70</span>) <span class="kw">return</span> <span class="str">'B'</span>;
+  <span class="kw">else if</span> (marks <span class="op">&gt;=</span> <span class="num">60</span>) <span class="kw">return</span> <span class="str">'C'</span>;
+  <span class="kw">else if</span> (marks <span class="op">&gt;=</span> <span class="num">50</span>) <span class="kw">return</span> <span class="str">'D'</span>;
+  <span class="kw">else</span>                   <span class="kw">return</span> <span class="str">'F'</span>;
+}
+
+console.<span class="fn">log</span>(<span class="fn">getGrade</span>(<span class="num">95</span>));  <span class="cm">// A+</span>
+console.<span class="fn">log</span>(<span class="fn">getGrade</span>(<span class="num">42</span>));  <span class="cm">// F</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;string&gt;</span>
+<span class="kw">using namespace</span> std;
+
+string <span class="fn">getGrade</span>(<span class="tp">int</span> marks) {
+  <span class="kw">if</span> (marks <span class="op">&gt;=</span> <span class="num">90</span>)      <span class="kw">return</span> <span class="str">"A+"</span>;
+  <span class="kw">else if</span> (marks <span class="op">&gt;=</span> <span class="num">80</span>) <span class="kw">return</span> <span class="str">"A"</span>;
+  <span class="kw">else if</span> (marks <span class="op">&gt;=</span> <span class="num">70</span>) <span class="kw">return</span> <span class="str">"B"</span>;
+  <span class="kw">else if</span> (marks <span class="op">&gt;=</span> <span class="num">60</span>) <span class="kw">return</span> <span class="str">"C"</span>;
+  <span class="kw">else if</span> (marks <span class="op">&gt;=</span> <span class="num">50</span>) <span class="kw">return</span> <span class="str">"D"</span>;
+  <span class="kw">else</span>                   <span class="kw">return</span> <span class="str">"F"</span>;
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> <span class="fn">getGrade</span>(<span class="num">95</span>) <span class="op">&lt;&lt;</span> endl; <span class="cm">// A+</span>
+  cout <span class="op">&lt;&lt;</span> <span class="fn">getGrade</span>(<span class="num">42</span>) <span class="op">&lt;&lt;</span> endl; <span class="cm">// F</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simple ATM -->
+  <div class="problem-card" id="card-22">
+    <div class="problem-header" onclick="toggleCard('card-22')">
+      <div class="problem-title">Simple ATM Logic <span class="diff-tag diff-medium">MEDIUM</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-22','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-22','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">class</span> <span class="fn">ATM</span> {
+  <span class="fn">constructor</span>(balance) {
+    <span class="kw">this</span>.balance <span class="op">=</span> balance;
+  }
+
+  <span class="fn">deposit</span>(amount) {
+    <span class="kw">if</span> (amount <span class="op">&lt;=</span> <span class="num">0</span>) <span class="kw">return</span> <span class="str">"Invalid amount"</span>;
+    <span class="kw">this</span>.balance <span class="op">+=</span> amount;
+    <span class="kw">return</span> <span class="str">`Deposited: ${amount}. Balance: ${this.balance}`</span>;
+  }
+
+  <span class="fn">withdraw</span>(amount) {
+    <span class="kw">if</span> (amount <span class="op">&lt;=</span> <span class="num">0</span>)            <span class="kw">return</span> <span class="str">"Invalid amount"</span>;
+    <span class="kw">if</span> (amount <span class="op">&gt;</span> <span class="kw">this</span>.balance)   <span class="kw">return</span> <span class="str">"Insufficient funds"</span>;
+    <span class="kw">this</span>.balance <span class="op">-=</span> amount;
+    <span class="kw">return</span> <span class="str">`Withdrawn: ${amount}. Balance: ${this.balance}`</span>;
+  }
+}
+
+<span class="kw">const</span> atm <span class="op">=</span> <span class="kw">new</span> <span class="fn">ATM</span>(<span class="num">1000</span>);
+console.<span class="fn">log</span>(atm.<span class="fn">withdraw</span>(<span class="num">500</span>));  <span class="cm">// Withdrawn: 500. Balance: 500</span>
+console.<span class="fn">log</span>(atm.<span class="fn">withdraw</span>(<span class="num">600</span>));  <span class="cm">// Insufficient funds</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">void</span> <span class="fn">atm</span>(<span class="tp">int</span> <span class="op">&amp;</span>balance, <span class="tp">int</span> amount, string action) {
+  <span class="kw">if</span> (action <span class="op">==</span> <span class="str">"deposit"</span>) {
+    balance <span class="op">+=</span> amount;
+    cout <span class="op">&lt;&lt;</span> <span class="str">"Deposited. Balance: "</span> <span class="op">&lt;&lt;</span> balance <span class="op">&lt;&lt;</span> endl;
+  } <span class="kw">else if</span> (action <span class="op">==</span> <span class="str">"withdraw"</span>) {
+    <span class="kw">if</span> (amount <span class="op">&gt;</span> balance)
+      cout <span class="op">&lt;&lt;</span> <span class="str">"Insufficient funds"</span> <span class="op">&lt;&lt;</span> endl;
+    <span class="kw">else</span> {
+      balance <span class="op">-=</span> amount;
+      cout <span class="op">&lt;&lt;</span> <span class="str">"Withdrawn. Balance: "</span> <span class="op">&lt;&lt;</span> balance <span class="op">&lt;&lt;</span> endl;
+    }
+  }
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  <span class="tp">int</span> bal <span class="op">=</span> <span class="num">1000</span>;
+  <span class="fn">atm</span>(bal, <span class="num">500</span>, <span class="str">"withdraw"</span>);  <span class="cm">// Withdrawn. Balance: 500</span>
+  <span class="fn">atm</span>(bal, <span class="num">600</span>, <span class="str">"withdraw"</span>);  <span class="cm">// Insufficient funds</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 6: RECURSION
+═══════════════════════════════════════════════════ -->
+<section class="section" id="s6">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <span class="section-icon">🔄</span>
+    <h2 class="section-title">Recursion Basics</h2>
+  </div>
+
+  <!-- Factorial Recursive -->
+  <div class="problem-card" id="card-23">
+    <div class="problem-header" onclick="toggleCard('card-23')">
+      <div class="problem-title">Factorial (Recursive) <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-23','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-23','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">factRec</span>(n) {
+  <span class="kw">if</span> (n <span class="op">&lt;=</span> <span class="num">1</span>) <span class="kw">return</span> <span class="num">1</span>;  <span class="cm">// base case</span>
+  <span class="kw">return</span> n <span class="op">*</span> <span class="fn">factRec</span>(n <span class="op">-</span> <span class="num">1</span>);
+}
+
+console.<span class="fn">log</span>(<span class="fn">factRec</span>(<span class="num">5</span>));  <span class="cm">// 120</span>
+<span class="cm">// Call stack: 5*4*3*2*1 = 120</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">int</span> <span class="fn">factRec</span>(<span class="tp">int</span> n) {
+  <span class="kw">if</span> (n <span class="op">&lt;=</span> <span class="num">1</span>) <span class="kw">return</span> <span class="num">1</span>;
+  <span class="kw">return</span> n <span class="op">*</span> <span class="fn">factRec</span>(n <span class="op">-</span> <span class="num">1</span>);
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> <span class="fn">factRec</span>(<span class="num">5</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// 120</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fibonacci Recursive -->
+  <div class="problem-card" id="card-24">
+    <div class="problem-header" onclick="toggleCard('card-24')">
+      <div class="problem-title">Fibonacci (Recursive) <span class="diff-tag diff-medium">MEDIUM</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-24','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-24','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">fibRec</span>(n) {
+  <span class="kw">if</span> (n <span class="op">&lt;=</span> <span class="num">0</span>) <span class="kw">return</span> <span class="num">0</span>;  <span class="cm">// base case</span>
+  <span class="kw">if</span> (n <span class="op">===</span> <span class="num">1</span>) <span class="kw">return</span> <span class="num">1</span>;  <span class="cm">// base case</span>
+  <span class="kw">return</span> <span class="fn">fibRec</span>(n <span class="op">-</span> <span class="num">1</span>) <span class="op">+</span> <span class="fn">fibRec</span>(n <span class="op">-</span> <span class="num">2</span>);
+}
+
+console.<span class="fn">log</span>(<span class="fn">fibRec</span>(<span class="num">10</span>)); <span class="cm">// 55</span>
+<span class="cm">// WARNING: O(2^n) — use iterative for large n</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">int</span> <span class="fn">fibRec</span>(<span class="tp">int</span> n) {
+  <span class="kw">if</span> (n <span class="op">&lt;=</span> <span class="num">0</span>) <span class="kw">return</span> <span class="num">0</span>;
+  <span class="kw">if</span> (n <span class="op">==</span> <span class="num">1</span>)  <span class="kw">return</span> <span class="num">1</span>;
+  <span class="kw">return</span> <span class="fn">fibRec</span>(n<span class="op">-</span><span class="num">1</span>) <span class="op">+</span> <span class="fn">fibRec</span>(n<span class="op">-</span><span class="num">2</span>);
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> <span class="fn">fibRec</span>(<span class="num">10</span>) <span class="op">&lt;&lt;</span> endl; <span class="cm">// 55</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sum of Digits Recursive -->
+  <div class="problem-card" id="card-25">
+    <div class="problem-header" onclick="toggleCard('card-25')">
+      <div class="problem-title">Sum of Digits (Recursive) <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-25','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-25','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">sumDigitsRec</span>(n) {
+  n <span class="op">=</span> Math.<span class="fn">abs</span>(n);
+  <span class="kw">if</span> (n <span class="op">&lt;</span> <span class="num">10</span>) <span class="kw">return</span> n;  <span class="cm">// base case: single digit</span>
+  <span class="kw">return</span> (n <span class="op">%</span> <span class="num">10</span>) <span class="op">+</span> <span class="fn">sumDigitsRec</span>(Math.<span class="fn">floor</span>(n <span class="op">/</span> <span class="num">10</span>));
+}
+
+console.<span class="fn">log</span>(<span class="fn">sumDigitsRec</span>(<span class="num">1234</span>)); <span class="cm">// 10</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">int</span> <span class="fn">sumDigitsRec</span>(<span class="tp">int</span> n) {
+  n <span class="op">=</span> abs(n);
+  <span class="kw">if</span> (n <span class="op">&lt;</span> <span class="num">10</span>) <span class="kw">return</span> n;
+  <span class="kw">return</span> n <span class="op">%</span> <span class="num">10</span> <span class="op">+</span> <span class="fn">sumDigitsRec</span>(n <span class="op">/</span> <span class="num">10</span>);
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> <span class="fn">sumDigitsRec</span>(<span class="num">1234</span>) <span class="op">&lt;&lt;</span> endl; <span class="cm">// 10</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Power -->
+  <div class="problem-card" id="card-26">
+    <div class="problem-header" onclick="toggleCard('card-26')">
+      <div class="problem-title">Power of a Number x^n (Recursive) <span class="diff-tag diff-medium">MEDIUM</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-26','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-26','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="cm">// Fast Power (Divide and Conquer)</span>
+<span class="kw">function</span> <span class="fn">power</span>(x, n) {
+  <span class="kw">if</span> (n <span class="op">===</span> <span class="num">0</span>) <span class="kw">return</span> <span class="num">1</span>;
+  <span class="kw">if</span> (n <span class="op">%</span> <span class="num">2</span> <span class="op">===</span> <span class="num">0</span>) {
+    <span class="kw">const</span> half <span class="op">=</span> <span class="fn">power</span>(x, n <span class="op">/</span> <span class="num">2</span>);
+    <span class="kw">return</span> half <span class="op">*</span> half;
+  }
+  <span class="kw">return</span> x <span class="op">*</span> <span class="fn">power</span>(x, n <span class="op">-</span> <span class="num">1</span>);
+}
+
+console.<span class="fn">log</span>(<span class="fn">power</span>(<span class="num">2</span>, <span class="num">10</span>));  <span class="cm">// 1024</span>
+console.<span class="fn">log</span>(<span class="fn">power</span>(<span class="num">3</span>, <span class="num">4</span>));   <span class="cm">// 81</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">long long</span> <span class="fn">power</span>(<span class="tp">long long</span> x, <span class="tp">int</span> n) {
+  <span class="kw">if</span> (n <span class="op">==</span> <span class="num">0</span>) <span class="kw">return</span> <span class="num">1</span>;
+  <span class="kw">if</span> (n <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span>) {
+    <span class="tp">long long</span> half <span class="op">=</span> <span class="fn">power</span>(x, n <span class="op">/</span> <span class="num">2</span>);
+    <span class="kw">return</span> half <span class="op">*</span> half;
+  }
+  <span class="kw">return</span> x <span class="op">*</span> <span class="fn">power</span>(x, n <span class="op">-</span> <span class="num">1</span>);
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  cout <span class="op">&lt;&lt;</span> <span class="fn">power</span>(<span class="num">2</span>, <span class="num">10</span>) <span class="op">&lt;&lt;</span> endl;  <span class="cm">// 1024</span>
+  cout <span class="op">&lt;&lt;</span> <span class="fn">power</span>(<span class="num">3</span>, <span class="num">4</span>) <span class="op">&lt;&lt;</span> endl;   <span class="cm">// 81</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Countdown -->
+  <div class="problem-card" id="card-27">
+    <div class="problem-header" onclick="toggleCard('card-27')">
+      <div class="problem-title">Countdown (Recursive) <span class="diff-tag diff-easy">EASY</span></div>
+      <div class="toggle-icon">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="tab-bar">
+        <div class="tab tab-js active" onclick="switchTab('card-27','js')">JS JavaScript</div>
+        <div class="tab tab-cpp" onclick="switchTab('card-27','cpp')">C++ C++</div>
+      </div>
+      <div class="tab-content active" data-lang="js">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">function</span> <span class="fn">countdown</span>(n) {
+  <span class="kw">if</span> (n <span class="op">&lt;</span> <span class="num">0</span>) <span class="kw">return</span>;  <span class="cm">// base case</span>
+  console.<span class="fn">log</span>(n);
+  <span class="fn">countdown</span>(n <span class="op">-</span> <span class="num">1</span>);
+}
+
+<span class="fn">countdown</span>(<span class="num">5</span>);
+<span class="cm">// 5 4 3 2 1 0</span></pre>
+        </div>
+      </div>
+      <div class="tab-content" data-lang="cpp">
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="tp">void</span> <span class="fn">countdown</span>(<span class="tp">int</span> n) {
+  <span class="kw">if</span> (n <span class="op">&lt;</span> <span class="num">0</span>) <span class="kw">return</span>;
+  cout <span class="op">&lt;&lt;</span> n <span class="op">&lt;&lt;</span> <span class="str">" "</span>;
+  <span class="fn">countdown</span>(n <span class="op">-</span> <span class="num">1</span>);
+}
+
+<span class="tp">int</span> <span class="fn">main</span>() {
+  <span class="fn">countdown</span>(<span class="num">5</span>);  <span class="cm">// 5 4 3 2 1 0</span>
+  <span class="kw">return</span> <span class="num">0</span>;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  // 27 Problems · 6 Categories · 2 Languages · Built for MNC Interview Prep
+</footer>
+
+<script>
+  function toggleCard(id) {
+    const card = document.getElementById(id);
+    card.classList.toggle('open');
+  }
+
+  function switchTab(cardId, lang) {
+    const card = document.getElementById(cardId);
+    const tabs = card.querySelectorAll('.tab');
+    const contents = card.querySelectorAll('.tab-content');
+
+    tabs.forEach(t => t.classList.remove('active'));
+    contents.forEach(c => c.classList.remove('active'));
+
+    const activeTab = card.querySelector(`.tab-${lang}`);
+    activeTab.classList.add('active');
+
+    const activeContent = card.querySelector(`[data-lang="${lang}"]`);
+    activeContent.classList.add('active');
+  }
+
+  function copyCode(btn) {
+    const pre = btn.nextElementSibling;
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ Copied';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  function scrollToSection(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  // Auto-open first card in each section
+  document.querySelectorAll('.section').forEach(section => {
+    const firstCard = section.querySelector('.problem-card');
+    if (firstCard) firstCard.classList.add('open');
+  });
+
+  // Highlight active nav on scroll
+  window.addEventListener('scroll', () => {
+    const sections = ['s1','s2','s3','s4','s5','s6'];
+    const navItems = document.querySelectorAll('.nav-item');
+    sections.forEach((id, idx) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      if (rect.top <= 100 && rect.bottom >= 100) {
+        navItems.forEach(n => n.classList.remove('active'));
+        navItems[idx].classList.add('active');
+      }
+    });
+  });
+</script>
+</body>
+</html>

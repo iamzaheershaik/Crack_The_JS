@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>React – 41 Questions Every Beginner Must Know</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --card: #16161f;
+    --border: #2a2a3a;
+    --accent: #61dafb;
+    --accent2: #f7df1e;
+    --accent3: #ff6b6b;
+    --text: #e8e8f0;
+    --muted: #7a7a9a;
+    --code-bg: #0d1117;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #0d0d1a 0%, #12122a 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 24px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 300px;
+    background: radial-gradient(ellipse, rgba(97,218,251,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .react-icon {
+    font-size: 48px;
+    animation: spin 12s linear infinite;
+    display: inline-block;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: -1px;
+    line-height: 1.1;
+  }
+  header p {
+    color: var(--muted);
+    margin-top: 10px;
+    font-size: 15px;
+  }
+  .badge {
+    display: inline-block;
+    margin-top: 18px;
+    background: rgba(97,218,251,0.1);
+    border: 1px solid rgba(97,218,251,0.3);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* ── LAYOUT ── */
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* ── QUESTION CARD ── */
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 28px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .q-card:hover { border-color: rgba(97,218,251,0.3); }
+
+  .q-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 24px 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .q-num {
+    min-width: 36px; height: 36px;
+    background: rgba(97,218,251,0.12);
+    border: 1px solid rgba(97,218,251,0.25);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .q-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    flex: 1;
+    line-height: 1.4;
+  }
+  .q-toggle {
+    color: var(--muted);
+    font-size: 18px;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .q-card.open .q-toggle { transform: rotate(45deg); color: var(--accent); }
+
+  .q-body {
+    display: none;
+    padding: 0 24px 24px;
+    border-top: 1px solid var(--border);
+  }
+  .q-card.open .q-body { display: block; }
+
+  .answer {
+    padding: 16px 0 0;
+    color: #c8c8dc;
+    font-size: 14px;
+  }
+  .answer strong { color: var(--accent); }
+
+  /* ── CODE BLOCK ── */
+  .code-wrap {
+    margin-top: 16px;
+    background: var(--code-bg);
+    border: 1px solid #2a2a3a;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .code-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: #161b22;
+    border-bottom: 1px solid #2a2a3a;
+  }
+  .dot { width:10px;height:10px;border-radius:50%; }
+  .dot.r{background:#ff5f57;} .dot.y{background:#febc2e;} .dot.g{background:#28c840;}
+  .code-label {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  pre {
+    padding: 18px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #c9d1d9;
+    white-space: pre;
+  }
+  /* syntax highlighting via spans */
+  .kw  { color: #ff7b72; }
+  .fn  { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .cm  { color: #8b949e; font-style: italic; }
+  .tag { color: #7ee787; }
+  .attr{ color: #79c0ff; }
+  .num { color: #f2cc60; }
+
+  /* ── SECTION DIVIDER ── */
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 40px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: var(--muted);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+  footer span { color: var(--accent); }
+  /* PAGE NAV */
+  .page-nav{display:flex;align-items:center;gap:.5rem;background:rgba(10,10,15,0.97);border-bottom:1px solid var(--border);padding:.48rem 1.5rem;position:sticky;top:0;z-index:200;overflow-x:auto;scrollbar-width:none;backdrop-filter:blur(12px)}
+  .page-nav::-webkit-scrollbar{display:none}
+  .page-nav-link{display:inline-flex;align-items:center;gap:.45rem;padding:.36rem .82rem;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:600;text-decoration:none;border:1px solid transparent;transition:all .18s;white-space:nowrap;color:var(--muted)}
+  .page-nav-link:hover{background:var(--card);color:var(--text)}
+  .page-nav-link.pn-mcq{--pnc:#f7df1e}.page-nav-link.pn-mcq:hover,.page-nav-link.pn-mcq.active{color:var(--pnc);border-color:var(--pnc);background:rgba(247,223,30,.08)}
+  .page-nav-link.pn-prearray{--pnc:#00bcd4}.page-nav-link.pn-prearray:hover,.page-nav-link.pn-prearray.active{color:var(--pnc);border-color:var(--pnc);background:rgba(0,188,212,.08)}
+  .page-nav-link.pn-react.active,.page-nav-link.pn-react:hover{color:var(--accent);border-color:var(--accent);background:rgba(97,218,251,.09)}
+  .page-nav-sep{width:1px;height:16px;background:var(--border);margin:0 .2rem}
+</style>
+</head>
+<body>
+
+<nav class="page-nav">
+  <a href="index.html" class="page-nav-link pn-mcq" title="JS Interview MCQ Bank">⚡ JS MCQ Bank</a>
+  <div class="page-nav-sep"></div>
+  <a href="PreArray.html" class="page-nav-link pn-prearray" title="Pre-Array Logic">🔢 Pre-Array Logic</a>
+  <div class="page-nav-sep"></div>
+  <a href="react.html" class="page-nav-link pn-react active" title="React Q&amp;A">⚛ React Q&amp;A</a>
+</nav>
+
+<header>
+  <div class="logo">
+    <span class="react-icon">⚛</span>
+  </div>
+  <h1>React — 41 Questions<br/>Every Beginner Must Know</h1>
+  <p>Practical answers with working code examples</p>
+  <div class="badge">Click any question to expand ↓</div>
+</header>
+
+<main id="app"></main>
+
+<footer>Built for React beginners · <span>41 Questions</span> · Click to expand answers</footer>
+
+<script>
+const QA = [
+  {
+    q: "How to display dynamic HTML data in React?",
+    a: "Use <strong>JSX</strong> to embed JavaScript expressions inside curly braces <code>{}</code>. For raw HTML strings, use <strong>dangerouslySetInnerHTML</strong> (carefully — XSS risk).",
+    code: `<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> name = <span class="str">"Zaheer"</span>;
+  <span class="kw">const</span> htmlString = <span class="str">"&lt;b&gt;Bold text&lt;/b&gt; from a string"</span>;
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      <span class="tag">&lt;p&gt;</span>Hello, {name}!<span class="tag">&lt;/p&gt;</span>       <span class="cm">// ✅ JSX expression</span>
+      <span class="tag">&lt;p</span> <span class="attr">dangerouslySetInnerHTML</span>={{ __html: htmlString }} <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}`
+  },
+  {
+    q: "How do you send data from parent to child component?",
+    a: "Pass data via <strong>props</strong>. The parent includes the value as an attribute on the child JSX tag. The child receives it in the <code>props</code> object (or via destructuring).",
+    code: `<span class="cm">// Parent</span>
+<span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">return</span> <span class="tag">&lt;Child</span> <span class="attr">message</span>=<span class="str">"Hello from parent!"</span> <span class="tag">/&gt;</span>;
+}
+
+<span class="cm">// Child</span>
+<span class="kw">function</span> <span class="fn">Child</span>({ message }) {
+  <span class="kw">return</span> <span class="tag">&lt;p&gt;</span>{message}<span class="tag">&lt;/p&gt;</span>;
+}`
+  },
+  {
+    q: "How to call a parent component method from child?",
+    a: "Pass the parent's function as a <strong>prop</strong> to the child. The child calls that function (like an event callback).",
+    code: `<span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> <span class="fn">handleClick</span> = () =&gt; alert(<span class="str">"Parent method called!"</span>);
+  <span class="kw">return</span> <span class="tag">&lt;Child</span> <span class="attr">onAction</span>={handleClick} <span class="tag">/&gt;</span>;
+}
+
+<span class="kw">function</span> <span class="fn">Child</span>({ onAction }) {
+  <span class="kw">return</span> <span class="tag">&lt;button</span> <span class="attr">onClick</span>={onAction}<span class="tag">&gt;</span>Call Parent<span class="tag">&lt;/button&gt;</span>;
+}`
+  },
+  {
+    q: "How do you access a DOM element?",
+    a: "Use the <strong>useRef</strong> hook. Attach the ref to a JSX element via the <code>ref</code> attribute. Access the real DOM node via <code>ref.current</code>.",
+    code: `<span class="kw">import</span> { useRef } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> inputRef = <span class="fn">useRef</span>(<span class="kw">null</span>);
+
+  <span class="kw">const</span> <span class="fn">focusInput</span> = () =&gt; inputRef.current.<span class="fn">focus</span>();
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;input</span> <span class="attr">ref</span>={inputRef} <span class="attr">placeholder</span>=<span class="str">"Click button to focus"</span> <span class="tag">/&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>={focusInput}<span class="tag">&gt;</span>Focus<span class="tag">&lt;/button&gt;</span>
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "How to bind an array / array of objects to a dropdown?",
+    a: "Use <strong>.map()</strong> inside a <code>&lt;select&gt;</code> to generate <code>&lt;option&gt;</code> elements. Always add a <code>key</code> prop.",
+    code: `<span class="kw">const</span> fruits = [<span class="str">"Apple"</span>, <span class="str">"Banana"</span>, <span class="str">"Mango"</span>];
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;select&gt;</span>
+      {fruits.<span class="fn">map</span>((fruit) =&gt; (
+        <span class="tag">&lt;option</span> <span class="attr">key</span>={fruit} <span class="attr">value</span>={fruit}<span class="tag">&gt;</span>
+          {fruit}
+        <span class="tag">&lt;/option&gt;</span>
+      ))}
+    <span class="tag">&lt;/select&gt;</span>
+  );
+}`
+  },
+  {
+    q: "How to create a lazy-loaded component?",
+    a: "Use <strong>React.lazy()</strong> with a dynamic <code>import()</code> and wrap it in <strong>Suspense</strong> to show a fallback while loading.",
+    code: `<span class="kw">import</span> { lazy, Suspense } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">const</span> HeavyComponent = <span class="fn">lazy</span>(() =&gt; <span class="fn">import</span>(<span class="str">'./HeavyComponent'</span>));
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;Suspense</span> <span class="attr">fallback</span>=<span class="str">"Loading..."</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;HeavyComponent /&gt;</span>
+    <span class="tag">&lt;/Suspense&gt;</span>
+  );
+}`
+  },
+  {
+    q: "How to display data entered by user in another textbox?",
+    a: "Use <strong>useState</strong>. Bind the input's value to state and render that state in the second input.",
+    code: `<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [text, setText] = <span class="fn">useState</span>(<span class="str">""</span>);
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;input</span> <span class="attr">value</span>={text} <span class="attr">onChange</span>={e =&gt; <span class="fn">setText</span>(e.target.value)} <span class="tag">/&gt;</span>
+      <span class="tag">&lt;input</span> <span class="attr">value</span>={text} <span class="attr">readOnly</span> <span class="tag">/&gt;</span>   <span class="cm">// mirrors first input</span>
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "How to loop through an array / array of objects?",
+    a: "Use <strong>Array.map()</strong> in JSX. Each item must have a unique <code>key</code> prop.",
+    code: `<span class="kw">const</span> users = [
+  { id: <span class="num">1</span>, name: <span class="str">"Ali"</span> },
+  { id: <span class="num">2</span>, name: <span class="str">"Sara"</span> },
+];
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;ul&gt;</span>
+      {users.<span class="fn">map</span>(user =&gt; (
+        <span class="tag">&lt;li</span> <span class="attr">key</span>={user.id}<span class="tag">&gt;</span>{user.name}<span class="tag">&lt;/li&gt;</span>
+      ))}
+    <span class="tag">&lt;/ul&gt;</span>
+  );
+}`
+  },
+  {
+    q: "How to conditionally render an element or text?",
+    a: "Use <strong>ternary operator</strong> or <strong>&amp;&amp;</strong> short-circuit inside JSX.",
+    code: `<span class="kw">function</span> <span class="fn">App</span>({ isLoggedIn }) {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      {isLoggedIn ? <span class="tag">&lt;p&gt;</span>Welcome back!<span class="tag">&lt;/p&gt;</span> : <span class="tag">&lt;p&gt;</span>Please login<span class="tag">&lt;/p&gt;</span>}
+
+      {isLoggedIn &amp;&amp; <span class="tag">&lt;button&gt;</span>Logout<span class="tag">&lt;/button&gt;</span>}
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}`
+  },
+  {
+    q: "How to change styles based on a condition?",
+    a: "Use a ternary in the <code>style</code> prop, or use template literals for <code>className</code>.",
+    code: `<span class="kw">function</span> <span class="fn">App</span>({ isActive }) {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      <span class="cm">// Inline style approach</span>
+      <span class="tag">&lt;p</span> <span class="attr">style</span>={{ color: isActive ? <span class="str">"green"</span> : <span class="str">"red"</span> }}<span class="tag">&gt;</span>
+        Status
+      <span class="tag">&lt;/p&gt;</span>
+
+      <span class="cm">// className approach</span>
+      <span class="tag">&lt;p</span> <span class="attr">className</span>={isActive ? <span class="str">"active"</span> : <span class="str">"inactive"</span>}<span class="tag">&gt;</span>
+        Status
+      <span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}`
+  },
+  {
+    q: "How to show and hide data based on condition?",
+    a: "Toggle a boolean state and conditionally render the element.",
+    code: `<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [visible, setVisible] = <span class="fn">useState</span>(<span class="kw">false</span>);
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setVisible</span>(v =&gt; !v)}<span class="tag">&gt;</span>Toggle<span class="tag">&lt;/button&gt;</span>
+      {visible &amp;&amp; <span class="tag">&lt;p&gt;</span>Now you see me! 👋<span class="tag">&lt;/p&gt;</span>}
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Bind array / array of objects to radio buttons?",
+    a: "Map over the array and render an <code>&lt;input type='radio'&gt;</code> for each item. Manage selected value in state.",
+    code: `<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">const</span> colors = [<span class="str">"Red"</span>, <span class="str">"Green"</span>, <span class="str">"Blue"</span>];
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [selected, setSelected] = <span class="fn">useState</span>(<span class="str">""</span>);
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      {colors.<span class="fn">map</span>(c =&gt; (
+        <span class="tag">&lt;label</span> <span class="attr">key</span>={c}<span class="tag">&gt;</span>
+          <span class="tag">&lt;input</span>
+            <span class="attr">type</span>=<span class="str">"radio"</span>
+            <span class="attr">value</span>={c}
+            <span class="attr">checked</span>={selected === c}
+            <span class="attr">onChange</span>={() =&gt; <span class="fn">setSelected</span>(c)}
+          <span class="tag">/&gt;</span>
+          {c}
+        <span class="tag">&lt;/label&gt;</span>
+      ))}
+      <span class="tag">&lt;p&gt;</span>Selected: {selected}<span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Display radio button value selected by user in another textbox?",
+    a: "Controlled radio buttons store the selected value in state. Render that state in an input's <code>value</code>.",
+    code: `<span class="cm">// Just extends Q12 — use selected state in an input</span>
+<span class="tag">&lt;input</span> <span class="attr">value</span>={selected} <span class="attr">readOnly</span> <span class="attr">placeholder</span>=<span class="str">"Selected color shows here"</span> <span class="tag">/&gt;</span>`
+  },
+  {
+    q: "How to call a method when component renders for the first time?",
+    a: "Use <strong>useEffect</strong> with an <strong>empty dependency array</strong> <code>[]</code>. This runs once — equivalent to <code>componentDidMount</code>.",
+    code: `<span class="kw">import</span> { useEffect } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="fn">useEffect</span>(() =&gt; {
+    console.<span class="fn">log</span>(<span class="str">"Component mounted — runs once!"</span>);
+  }, []); <span class="cm">// ← empty array = run only on mount</span>
+
+  <span class="kw">return</span> <span class="tag">&lt;p&gt;</span>Hello<span class="tag">&lt;/p&gt;</span>;
+}`
+  },
+  {
+    q: "Display keys and values of an object in a loop?",
+    a: "Use <strong>Object.entries()</strong> to get [key, value] pairs and <code>.map()</code> over them.",
+    code: `<span class="kw">const</span> user = { name: <span class="str">"Zaheer"</span>, age: <span class="num">25</span>, role: <span class="str">"Dev"</span> };
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;ul&gt;</span>
+      {Object.<span class="fn">entries</span>(user).<span class="fn">map</span>(([key, value]) =&gt; (
+        <span class="tag">&lt;li</span> <span class="attr">key</span>={key}<span class="tag">&gt;</span>
+          <span class="tag">&lt;strong&gt;</span>{key}<span class="tag">&lt;/strong&gt;</span>: {value}
+        <span class="tag">&lt;/li&gt;</span>
+      ))}
+    <span class="tag">&lt;/ul&gt;</span>
+  );
+}`
+  },
+  {
+    q: "How to re-render a component on value change?",
+    a: "React automatically re-renders when <strong>state</strong> changes. Call a state setter and the component re-renders with the new value.",
+    code: `<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;p&gt;</span>Count: {count}<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setCount</span>(c =&gt; c + <span class="num">1</span>)}<span class="tag">&gt;</span>Increment<span class="tag">&lt;/button&gt;</span>
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "How to call a method on every re-render of a component?",
+    a: "Use <strong>useEffect</strong> with <strong>no dependency array</strong>. It runs after every render.",
+    code: `<span class="kw">import</span> { useEffect } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="fn">useEffect</span>(() =&gt; {
+    console.<span class="fn">log</span>(<span class="str">"Ran after every render"</span>);
+  }); <span class="cm">// ← no dependency array</span>
+
+  <span class="kw">return</span> <span class="tag">&lt;p&gt;</span>Check console<span class="tag">&lt;/p&gt;</span>;
+}`
+  },
+  {
+    q: "How to add data into a useState array?",
+    a: "Use the spread operator to create a new array with the new item appended. Never mutate state directly.",
+    code: `<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [items, setItems] = <span class="fn">useState</span>([<span class="str">"Apple"</span>]);
+
+  <span class="kw">const</span> <span class="fn">addItem</span> = () =&gt; {
+    <span class="fn">setItems</span>(prev =&gt; [...prev, <span class="str">"New Item"</span>]); <span class="cm">// spread + add</span>
+  };
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>={addItem}<span class="tag">&gt;</span>Add<span class="tag">&lt;/button&gt;</span>
+      {items.<span class="fn">map</span>((i, idx) =&gt; <span class="tag">&lt;p</span> <span class="attr">key</span>={idx}<span class="tag">&gt;</span>{i}<span class="tag">&lt;/p&gt;</span>)}
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Create a search textbox filter?",
+    a: "Store search text in state. Filter the array before rendering using <strong>.filter()</strong>.",
+    code: `<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">const</span> names = [<span class="str">"Ali"</span>, <span class="str">"Ahmad"</span>, <span class="str">"Sara"</span>, <span class="str">"Bilal"</span>];
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [query, setQuery] = <span class="fn">useState</span>(<span class="str">""</span>);
+  <span class="kw">const</span> filtered = names.<span class="fn">filter</span>(n =>
+    n.<span class="fn">toLowerCase</span>().<span class="fn">includes</span>(query.<span class="fn">toLowerCase</span>())
+  );
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;input</span> <span class="attr">placeholder</span>=<span class="str">"Search..."</span> <span class="attr">onChange</span>={e =&gt; <span class="fn">setQuery</span>(e.target.value)} <span class="tag">/&gt;</span>
+      {filtered.<span class="fn">map</span>(n =&gt; <span class="tag">&lt;p</span> <span class="attr">key</span>={n}<span class="tag">&gt;</span>{n}<span class="tag">&lt;/p&gt;</span>)}
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Create a counter component using useState?",
+    a: "Classic useState example. Increment, decrement, and reset using state setters.",
+    code: `<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">Counter</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setCount</span>(c =&gt; c - <span class="num">1</span>)}<span class="tag">&gt;</span>-<span class="tag">&lt;/button&gt;</span>
+      <span class="tag">&lt;span&gt;</span> {count} <span class="tag">&lt;/span&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setCount</span>(c =&gt; c + <span class="num">1</span>)}<span class="tag">&gt;</span>+<span class="tag">&lt;/button&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setCount</span>(<span class="num">0</span>)}<span class="tag">&gt;</span>Reset<span class="tag">&lt;/button&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Create a counter component using useReducer?",
+    a: "<strong>useReducer</strong> is better for complex state logic. Define a reducer function that handles action types.",
+    code: `<span class="kw">import</span> { useReducer } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">reducer</span>(state, action) {
+  <span class="kw">switch</span> (action.type) {
+    <span class="kw">case</span> <span class="str">"INC"</span>:    <span class="kw">return</span> { count: state.count + <span class="num">1</span> };
+    <span class="kw">case</span> <span class="str">"DEC"</span>:    <span class="kw">return</span> { count: state.count - <span class="num">1</span> };
+    <span class="kw">case</span> <span class="str">"RESET"</span>:  <span class="kw">return</span> { count: <span class="num">0</span> };
+    <span class="kw">default</span>:       <span class="kw">return</span> state;
+  }
+}
+
+<span class="kw">function</span> <span class="fn">Counter</span>() {
+  <span class="kw">const</span> [state, dispatch] = <span class="fn">useReducer</span>(reducer, { count: <span class="num">0</span> });
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;div&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">dispatch</span>({ type: <span class="str">"DEC"</span> })}<span class="tag">&gt;</span>-<span class="tag">&lt;/button&gt;</span>
+      <span class="tag">&lt;span&gt;</span> {state.count} <span class="tag">&lt;/span&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">dispatch</span>({ type: <span class="str">"INC"</span> })}<span class="tag">&gt;</span>+<span class="tag">&lt;/button&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Change focus/enable/disable a textbox in child based on parent button click?",
+    a: "Pass a ref from parent to child via a prop, or use <strong>useImperativeHandle</strong>. Simpler: pass a boolean prop and use <code>useEffect</code> in child to focus.",
+    code: `<span class="kw">import</span> { useState, useRef, useEffect } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">Child</span>({ shouldFocus }) {
+  <span class="kw">const</span> ref = <span class="fn">useRef</span>();
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="kw">if</span> (shouldFocus) ref.current.<span class="fn">focus</span>();
+  }, [shouldFocus]);
+  <span class="kw">return</span> <span class="tag">&lt;input</span> <span class="attr">ref</span>={ref} <span class="attr">placeholder</span>=<span class="str">"I get focused"</span> <span class="tag">/&gt;</span>;
+}
+
+<span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [focus, setFocus] = <span class="fn">useState</span>(<span class="kw">false</span>);
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setFocus</span>(<span class="kw">true</span>)}<span class="tag">&gt;</span>Focus Child Input<span class="tag">&lt;/button&gt;</span>
+      <span class="tag">&lt;Child</span> <span class="attr">shouldFocus</span>={focus} <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "How to perform debouncing?",
+    a: "<strong>Debouncing</strong> delays execution until the user stops typing. Use <code>setTimeout</code> inside <code>useEffect</code>, clearing it on each keystroke.",
+    code: `<span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [input, setInput] = <span class="fn">useState</span>(<span class="str">""</span>);
+  <span class="kw">const</span> [debounced, setDebounced] = <span class="fn">useState</span>(<span class="str">""</span>);
+
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="kw">const</span> timer = <span class="fn">setTimeout</span>(() =&gt; <span class="fn">setDebounced</span>(input), <span class="num">500</span>);
+    <span class="kw">return</span> () =&gt; <span class="fn">clearTimeout</span>(timer); <span class="cm">// cleanup on each keystroke</span>
+  }, [input]);
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;input</span> <span class="attr">onChange</span>={e =&gt; <span class="fn">setInput</span>(e.target.value)} <span class="tag">/&gt;</span>
+      <span class="tag">&lt;p&gt;</span>Debounced: {debounced}<span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Create a component to fetch data from an API?",
+    a: "Use <strong>useEffect</strong> with an async fetch inside it. Store results in state. Handle loading and error states.",
+    code: `<span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [data, setData] = <span class="fn">useState</span>([]);
+  <span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">true</span>);
+
+  <span class="fn">useEffect</span>(() =&gt; {
+    <span class="fn">fetch</span>(<span class="str">"https://jsonplaceholder.typicode.com/users"</span>)
+      .<span class="fn">then</span>(r =&gt; r.<span class="fn">json</span>())
+      .<span class="fn">then</span>(d =&gt; { <span class="fn">setData</span>(d); <span class="fn">setLoading</span>(<span class="kw">false</span>); });
+  }, []);
+
+  <span class="kw">if</span> (loading) <span class="kw">return</span> <span class="tag">&lt;p&gt;</span>Loading...<span class="tag">&lt;/p&gt;</span>;
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;ul&gt;</span>
+      {data.<span class="fn">map</span>(u =&gt; <span class="tag">&lt;li</span> <span class="attr">key</span>={u.id}<span class="tag">&gt;</span>{u.name}<span class="tag">&lt;/li&gt;</span>)}
+    <span class="tag">&lt;/ul&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Force a component to re-render without useState?",
+    a: "Use a <strong>useReducer</strong> trick — dispatch with no real logic — or store a dummy counter in a ref and use <code>forceUpdate</code> pattern.",
+    code: `<span class="kw">import</span> { useReducer } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">useForceUpdate</span>() {
+  <span class="kw">const</span> [, dispatch] = <span class="fn">useReducer</span>(x =&gt; x + <span class="num">1</span>, <span class="num">0</span>);
+  <span class="kw">return</span> dispatch;
+}
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> forceUpdate = <span class="fn">useForceUpdate</span>();
+  <span class="kw">return</span> <span class="tag">&lt;button</span> <span class="attr">onClick</span>={forceUpdate}<span class="tag">&gt;</span>Force Re-render<span class="tag">&lt;/button&gt;</span>;
+}`
+  },
+  {
+    q: "How to call a method immediately after state is updated / after re-render?",
+    a: "Use <strong>useEffect</strong> with the state variable as a dependency. It fires after the render caused by that state change.",
+    code: `<span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+
+  <span class="fn">useEffect</span>(() =&gt; {
+    console.<span class="fn">log</span>(<span class="str">"Count just updated to:"</span>, count);
+  }, [count]); <span class="cm">// ← runs after count changes</span>
+
+  <span class="kw">return</span> <span class="tag">&lt;button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setCount</span>(c =&gt; c + <span class="num">1</span>)}<span class="tag">&gt;</span>+<span class="tag">&lt;/button&gt;</span>;
+}`
+  },
+  {
+    q: "Display number of characters remaining for textarea using useRef?",
+    a: "Use a controlled input for the value and <code>useRef</code> to directly display the remaining count without causing an extra state re-render.",
+    code: `<span class="kw">import</span> { useRef, useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">const</span> MAX = <span class="num">100</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> countRef = <span class="fn">useRef</span>(<span class="kw">null</span>);
+
+  <span class="kw">const</span> <span class="fn">handleChange</span> = (e) =&gt; {
+    <span class="kw">const</span> remaining = MAX - e.target.value.length;
+    countRef.current.textContent = remaining;
+  };
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;textarea</span> <span class="attr">maxLength</span>={MAX} <span class="attr">onChange</span>={handleChange} <span class="tag">/&gt;</span>
+      <span class="tag">&lt;p&gt;</span>Remaining: <span class="tag">&lt;span</span> <span class="attr">ref</span>={countRef}<span class="tag">&gt;</span>{MAX}<span class="tag">&lt;/span&gt;</span><span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Given two dropdowns, load 2nd options based on value of 1st?",
+    a: "Store first dropdown's value in state. Derive the second dropdown's options from it using a lookup object.",
+    code: `<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">const</span> data = {
+  India:  [<span class="str">"Delhi"</span>, <span class="str">"Mumbai"</span>],
+  USA:    [<span class="str">"New York"</span>, <span class="str">"Texas"</span>],
+};
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [country, setCountry] = <span class="fn">useState</span>(<span class="str">""</span>);
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;select</span> <span class="attr">onChange</span>={e =&gt; <span class="fn">setCountry</span>(e.target.value)}<span class="tag">&gt;</span>
+        <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="str">""</span><span class="tag">&gt;</span>Select country<span class="tag">&lt;/option&gt;</span>
+        {Object.<span class="fn">keys</span>(data).<span class="fn">map</span>(c =&gt; <span class="tag">&lt;option</span> <span class="attr">key</span>={c}<span class="tag">&gt;</span>{c}<span class="tag">&lt;/option&gt;</span>)}
+      <span class="tag">&lt;/select&gt;</span>
+
+      <span class="tag">&lt;select&gt;</span>
+        {(data[country] || []).<span class="fn">map</span>(s =&gt; <span class="tag">&lt;option</span> <span class="attr">key</span>={s}<span class="tag">&gt;</span>{s}<span class="tag">&lt;/option&gt;</span>)}
+      <span class="tag">&lt;/select&gt;</span>
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Perform type checking using prop-types?",
+    a: "Install <code>prop-types</code> package. Add a <code>propTypes</code> static property to your component to validate incoming props.",
+    code: `<span class="kw">import</span> PropTypes <span class="kw">from</span> <span class="str">'prop-types'</span>;
+
+<span class="kw">function</span> <span class="fn">Card</span>({ title, count }) {
+  <span class="kw">return</span> <span class="tag">&lt;p&gt;</span>{title}: {count}<span class="tag">&lt;/p&gt;</span>;
+}
+
+Card.propTypes = {
+  title: PropTypes.string.isRequired,
+  count: PropTypes.number,
+};
+
+Card.defaultProps = { count: <span class="num">0</span> };`
+  },
+  {
+    q: "Share data between components using Context API?",
+    a: "Create a context with <code>createContext</code>. Wrap a parent with <code>Provider</code>. Consume it in any child with <code>useContext</code>.",
+    code: `<span class="kw">import</span> { createContext, useContext } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">const</span> ThemeContext = <span class="fn">createContext</span>(<span class="str">"light"</span>);
+
+<span class="kw">function</span> <span class="fn">Child</span>() {
+  <span class="kw">const</span> theme = <span class="fn">useContext</span>(ThemeContext);
+  <span class="kw">return</span> <span class="tag">&lt;p&gt;</span>Theme: {theme}<span class="tag">&lt;/p&gt;</span>;
+}
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="tag">&lt;ThemeContext.Provider</span> <span class="attr">value</span>=<span class="str">"dark"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;Child /&gt;</span>
+    <span class="tag">&lt;/ThemeContext.Provider&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Give an example of optimization using useMemo?",
+    a: "<strong>useMemo</strong> caches a computed value and only recalculates when its dependencies change — prevents expensive re-computation on every render.",
+    code: `<span class="kw">import</span> { useState, useMemo } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [nums] = <span class="fn">useState</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]);
+  <span class="kw">const</span> [toggle, setToggle] = <span class="fn">useState</span>(<span class="kw">false</span>);
+
+  <span class="kw">const</span> total = <span class="fn">useMemo</span>(() =&gt; {
+    console.<span class="fn">log</span>(<span class="str">"Expensive calc ran"</span>);
+    <span class="kw">return</span> nums.<span class="fn">reduce</span>((a, b) =&gt; a + b, <span class="num">0</span>);
+  }, [nums]); <span class="cm">// only recalcs when nums changes</span>
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;p&gt;</span>Total: {total}<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setToggle</span>(t =&gt; !t)}<span class="tag">&gt;</span>Re-render<span class="tag">&lt;/button&gt;</span>
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Give an example of optimization using useCallback?",
+    a: "<strong>useCallback</strong> memoizes a function reference. Useful when passing callbacks to memoized child components.",
+    code: `<span class="kw">import</span> { useState, useCallback, memo } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">const</span> Child = <span class="fn">memo</span>(({ onClick }) =&gt; {
+  console.<span class="fn">log</span>(<span class="str">"Child rendered"</span>);
+  <span class="kw">return</span> <span class="tag">&lt;button</span> <span class="attr">onClick</span>={onClick}<span class="tag">&gt;</span>Click<span class="tag">&lt;/button&gt;</span>;
+});
+
+<span class="kw">function</span> <span class="fn">Parent</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+
+  <span class="kw">const</span> handleClick = <span class="fn">useCallback</span>(() =&gt; {
+    console.<span class="fn">log</span>(<span class="str">"clicked"</span>);
+  }, []); <span class="cm">// stable reference, Child won't re-render</span>
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>={() =&gt; <span class="fn">setCount</span>(c =&gt; c+<span class="num">1</span>)}<span class="tag">&gt;</span>+{count}<span class="tag">&lt;/button&gt;</span>
+      <span class="tag">&lt;Child</span> <span class="attr">onClick</span>={handleClick} <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Create an Error Boundary component?",
+    a: "Error boundaries are <strong>class components</strong> only (no hook equivalent yet). They catch JS errors in the component tree.",
+    code: `<span class="kw">import</span> { Component } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">class</span> <span class="fn">ErrorBoundary</span> <span class="kw">extends</span> Component {
+  state = { hasError: <span class="kw">false</span> };
+
+  <span class="kw">static</span> <span class="fn">getDerivedStateFromError</span>() {
+    <span class="kw">return</span> { hasError: <span class="kw">true</span> };
+  }
+
+  <span class="fn">componentDidCatch</span>(err, info) {
+    console.<span class="fn">log</span>(err, info);
+  }
+
+  <span class="fn">render</span>() {
+    <span class="kw">if</span> (<span class="kw">this</span>.state.hasError)
+      <span class="kw">return</span> <span class="tag">&lt;h2&gt;</span>Something went wrong.<span class="tag">&lt;/h2&gt;</span>;
+    <span class="kw">return</span> <span class="kw">this</span>.props.children;
+  }
+}
+
+<span class="cm">// Usage:</span>
+<span class="cm">// &lt;ErrorBoundary&gt;&lt;MyComponent /&gt;&lt;/ErrorBoundary&gt;</span>`
+  },
+  {
+    q: "Display dropdown value selected by user in another textbox?",
+    a: "Store the selected dropdown value in state. Bind that same state value to an input's <code>value</code> prop.",
+    code: `<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [val, setVal] = <span class="fn">useState</span>(<span class="str">""</span>);
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;select</span> <span class="attr">onChange</span>={e =&gt; <span class="fn">setVal</span>(e.target.value)}<span class="tag">&gt;</span>
+        <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="str">"React"</span><span class="tag">&gt;</span>React<span class="tag">&lt;/option&gt;</span>
+        <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="str">"Vue"</span><span class="tag">&gt;</span>Vue<span class="tag">&lt;/option&gt;</span>
+      <span class="tag">&lt;/select&gt;</span>
+      <span class="tag">&lt;input</span> <span class="attr">value</span>={val} <span class="attr">readOnly</span> <span class="tag">/&gt;</span>
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Create a pure component?",
+    a: "In functional components, wrap with <strong>React.memo()</strong>. It prevents re-renders when props haven't changed (shallow comparison).",
+    code: `<span class="kw">import</span> { memo } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">const</span> PureCard = <span class="fn">memo</span>(({ title }) =&gt; {
+  console.<span class="fn">log</span>(<span class="str">"PureCard rendered"</span>);
+  <span class="kw">return</span> <span class="tag">&lt;p&gt;</span>{title}<span class="tag">&lt;/p&gt;</span>;
+});
+
+<span class="cm">// PureCard only re-renders if 'title' prop changes</span>`
+  },
+  {
+    q: "Create a controlled and uncontrolled component?",
+    a: "<strong>Controlled</strong>: input's value driven by React state. <strong>Uncontrolled</strong>: input's value is managed by the DOM, accessed via ref.",
+    code: `<span class="kw">import</span> { useState, useRef } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="cm">// ✅ Controlled — React owns the value</span>
+<span class="kw">function</span> <span class="fn">Controlled</span>() {
+  <span class="kw">const</span> [val, setVal] = <span class="fn">useState</span>(<span class="str">""</span>);
+  <span class="kw">return</span> <span class="tag">&lt;input</span> <span class="attr">value</span>={val} <span class="attr">onChange</span>={e =&gt; <span class="fn">setVal</span>(e.target.value)} <span class="tag">/&gt;</span>;
+}
+
+<span class="cm">// ✅ Uncontrolled — DOM owns the value</span>
+<span class="kw">function</span> <span class="fn">Uncontrolled</span>() {
+  <span class="kw">const</span> ref = <span class="fn">useRef</span>();
+  <span class="kw">const</span> <span class="fn">submit</span> = () =&gt; alert(ref.current.value);
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      <span class="tag">&lt;input</span> <span class="attr">ref</span>={ref} <span class="attr">defaultValue</span>=<span class="str">"edit me"</span> <span class="tag">/&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">onClick</span>={submit}<span class="tag">&gt;</span>Get Value<span class="tag">&lt;/button&gt;</span>
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "Create a custom hook?",
+    a: "A <strong>custom hook</strong> is a function starting with <code>use</code> that contains reusable hook logic.",
+    code: `<span class="cm">// useLocalStorage.js — custom hook</span>
+<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">useLocalStorage</span>(key, initial) {
+  <span class="kw">const</span> [val, setVal] = <span class="fn">useState</span>(
+    () =&gt; JSON.<span class="fn">parse</span>(localStorage.<span class="fn">getItem</span>(key)) ?? initial
+  );
+
+  <span class="kw">const</span> <span class="fn">set</span> = (v) =&gt; {
+    <span class="fn">setVal</span>(v);
+    localStorage.<span class="fn">setItem</span>(key, JSON.<span class="fn">stringify</span>(v));
+  };
+
+  <span class="kw">return</span> [val, set];
+}
+
+<span class="cm">// Usage in any component:</span>
+<span class="cm">// const [name, setName] = useLocalStorage("name", "");</span>`
+  },
+  {
+    q: "Create a popup using Portal?",
+    a: "<strong>ReactDOM.createPortal()</strong> renders a component outside the parent DOM hierarchy (e.g., directly into <code>document.body</code>).",
+    code: `<span class="kw">import</span> { createPortal } <span class="kw">from</span> <span class="str">'react-dom'</span>;
+
+<span class="kw">function</span> <span class="fn">Modal</span>({ onClose }) {
+  <span class="kw">return</span> <span class="fn">createPortal</span>(
+    <span class="tag">&lt;div</span> <span class="attr">style</span>={{ position: <span class="str">"fixed"</span>, top: <span class="num">0</span>, background: <span class="str">"rgba(0,0,0,0.5)"</span> }}<span class="tag">&gt;</span>
+      <span class="tag">&lt;div&gt;</span>
+        <span class="tag">&lt;p&gt;</span>I am a Portal Modal!<span class="tag">&lt;/p&gt;</span>
+        <span class="tag">&lt;button</span> <span class="attr">onClick</span>={onClose}<span class="tag">&gt;</span>Close<span class="tag">&lt;/button&gt;</span>
+      <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>,
+    document.body <span class="cm">// renders outside #root</span>
+  );
+}`
+  },
+  {
+    q: "Which lifecycle hooks in class components are replaced by useEffect?",
+    a: "<code>useEffect</code> replaces three class lifecycle methods depending on how you use it.",
+    code: `<span class="cm">// 1. componentDidMount → empty deps []</span>
+<span class="fn">useEffect</span>(() =&gt; { console.<span class="fn">log</span>(<span class="str">"mounted"</span>); }, []);
+
+<span class="cm">// 2. componentDidUpdate → specific deps</span>
+<span class="fn">useEffect</span>(() =&gt; { console.<span class="fn">log</span>(<span class="str">"count changed"</span>); }, [count]);
+
+<span class="cm">// 3. componentWillUnmount → return cleanup fn</span>
+<span class="fn">useEffect</span>(() =&gt; {
+  <span class="kw">const</span> id = <span class="fn">setInterval</span>(tick, <span class="num">1000</span>);
+  <span class="kw">return</span> () =&gt; <span class="fn">clearInterval</span>(id); <span class="cm">// cleanup on unmount</span>
+}, []);`
+  },
+  {
+    q: "Create a pagination component?",
+    a: "Split data into pages based on a page size. Track current page in state. Slice the data array for the current page.",
+    code: `<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">const</span> ALL = Array.<span class="fn">from</span>({ length: <span class="num">20</span> }, (_, i) =&gt; <span class="str">\`Item \${i + 1}\`</span>);
+<span class="kw">const</span> PAGE_SIZE = <span class="num">5</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">const</span> [page, setPage] = <span class="fn">useState</span>(<span class="num">1</span>);
+  <span class="kw">const</span> totalPages = Math.<span class="fn">ceil</span>(ALL.length / PAGE_SIZE);
+  <span class="kw">const</span> items = ALL.<span class="fn">slice</span>((page-<span class="num">1</span>) * PAGE_SIZE, page * PAGE_SIZE);
+
+  <span class="kw">return</span> (
+    <span class="tag">&lt;&gt;</span>
+      {items.<span class="fn">map</span>(i =&gt; <span class="tag">&lt;p</span> <span class="attr">key</span>={i}<span class="tag">&gt;</span>{i}<span class="tag">&lt;/p&gt;</span>)}
+      <span class="tag">&lt;button</span> <span class="attr">disabled</span>={page===<span class="num">1</span>} <span class="attr">onClick</span>={() =&gt; <span class="fn">setPage</span>(p=&gt;p-<span class="num">1</span>)}<span class="tag">&gt;</span>Prev<span class="tag">&lt;/button&gt;</span>
+      <span class="tag">&lt;span&gt;</span> {page}/{totalPages} <span class="tag">&lt;/span&gt;</span>
+      <span class="tag">&lt;button</span> <span class="attr">disabled</span>={page===totalPages} <span class="attr">onClick</span>={() =&gt; <span class="fn">setPage</span>(p=&gt;p+<span class="num">1</span>)}<span class="tag">&gt;</span>Next<span class="tag">&lt;/button&gt;</span>
+    <span class="tag">&lt;/&gt;</span>
+  );
+}`
+  },
+  {
+    q: "How do you safeguard your application?",
+    a: "Multiple layers: sanitize inputs (prevent XSS), avoid <code>dangerouslySetInnerHTML</code>, use HTTPS, validate env vars, protect routes with auth, use Content Security Policy headers, and keep dependencies updated.",
+    code: `<span class="cm">// 1. Protect routes</span>
+<span class="kw">function</span> <span class="fn">PrivateRoute</span>({ children }) {
+  <span class="kw">const</span> isAuth = <span class="fn">useAuth</span>();
+  <span class="kw">return</span> isAuth ? children : <span class="tag">&lt;Navigate</span> <span class="attr">to</span>=<span class="str">"/login"</span> <span class="tag">/&gt;</span>;
+}
+
+<span class="cm">// 2. Sanitize HTML (use DOMPurify — never raw innerHTML)</span>
+<span class="kw">import</span> DOMPurify <span class="kw">from</span> <span class="str">'dompurify'</span>;
+<span class="kw">const</span> clean = DOMPurify.<span class="fn">sanitize</span>(userInputHtml);
+
+<span class="cm">// 3. Never expose secrets in frontend code</span>
+<span class="cm">// Use .env and only VITE_/REACT_APP_ prefixed vars</span>
+<span class="cm">// NEVER put API keys directly in source code</span>`
+  }
+];
+
+const sections = [
+  { label: "Basics & Props", range: [0, 4] },
+  { label: "Lists, Loops & Conditionals", range: [5, 11] },
+  { label: "Hooks & State", range: [12, 20] },
+  { label: "Advanced Hooks & Patterns", range: [21, 30] },
+  { label: "Optimization, Context & Safety", range: [31, 40] },
+];
+
+const app = document.getElementById("app");
+
+let html = "";
+let sectionIdx = 0;
+
+QA.forEach((item, i) => {
+  // Insert section label
+  const s = sections[sectionIdx];
+  if (s && i === s.range[0]) {
+    html += `<div class="section-label">${s.label}</div>`;
+    sectionIdx++;
+  }
+
+  html += `
+  <div class="q-card" id="card-${i}">
+    <div class="q-header" onclick="toggle(${i})">
+      <div class="q-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="q-title">${item.q}</div>
+      <div class="q-toggle">+</div>
+    </div>
+    <div class="q-body">
+      <div class="answer">${item.a}</div>
+      ${item.code ? `
+      <div class="code-wrap">
+        <div class="code-bar">
+          <span class="dot r"></span>
+          <span class="dot y"></span>
+          <span class="dot g"></span>
+          <span class="code-label">JSX / React</span>
+        </div>
+        <pre>${item.code}</pre>
+      </div>` : ""}
+    </div>
+  </div>`;
+});
+
+app.innerHTML = html;
+
+function toggle(i) {
+  const card = document.getElementById("card-" + i);
+  card.classList.toggle("open");
+}
+</script>
+</body>
+</html>
